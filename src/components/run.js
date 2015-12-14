@@ -5,7 +5,7 @@ import { Router } from 'react-router'
 //import App from './Main';
 
 const history = useBasename(createHistory)({
-  basename: '/SISDN'
+  basename: '/'
 })
 
 const rootRoute = {
