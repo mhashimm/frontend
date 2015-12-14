@@ -1,18 +1,16 @@
-require('normalize.css');
 require('styles/main.scss');
 
 import React from 'react';
-import Portal from './portal/portal'
+import Dashboard from './dashboard';
 
 class App extends React.Component {
   render() {
     return (
-      <Portal/>
+      <div>
+          { this.props.children || <Dashboard /> }
+      </div>
     );
   }
 }
 
-App.defaultProps = {
-};
-
-export default App;
+module.exports = App
