@@ -2,6 +2,8 @@ var path = require('path');
 var port = 8000;
 var srcPath = path.join(__dirname, '/../src');
 var publicPath = '/assets/';
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 module.exports = {
   port: port,
   debug: true,
@@ -22,7 +24,8 @@ module.exports = {
     extensions: [
       '',
       '.js',
-      '.jsx'
+      '.jsx',
+      '.scss'
     ],
     alias: {
       actions: srcPath + '/actions/',
@@ -45,12 +48,10 @@ module.exports = {
         loader: 'style-loader!css-loader!postcss-loader'
       },
       {
-        test: /\.sass/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded&indentedSyntax'
-      },
-      {
-        test: /\.scss/,
-        loader: 'style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded'
+        test: /\.scss$/,
+        loader: ExtractTextPlugin.extract('css!sass?outputStyle=expanded&includePaths[]=' +
+          path.resolve(__dirname, '../node_modules/foundation-sites/scss'))
+        // loader: ExtractTextPlugin.extract('style-loader!css-loader!postcss-loader!sass-loader?outputStyle=expanded')
       },
       {
         test: /\.less/,
@@ -61,7 +62,7 @@ module.exports = {
         loader: 'style-loader!css-loader!postcss-loader!stylus-loader'
       },
       {
-        test: /\.(png|jpg|gif|woff|woff2)$/,
+        test: /\.(png|jpg|gif|woff|woff2|svg)$/,
         loader: 'url-loader?limit=8192'
       }
     ]

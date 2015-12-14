@@ -1,6 +1,7 @@
 var path = require('path');
 var webpack = require('webpack');
 var _ = require('lodash');
+var ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 var baseConfig = require('./base');
 
@@ -20,6 +21,9 @@ var config = _.merge({
     new webpack.NoErrorsPlugin(),
     new BowerWebpackPlugin({
       searchResolveModulesDirectories: false
+    }),
+    new ExtractTextPlugin("style.css", {
+        allChunks: true
     })
   ]
 }, baseConfig);
