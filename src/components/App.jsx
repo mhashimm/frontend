@@ -1,4 +1,4 @@
-require('styles/main.scss');
+require('styles/style.css');
 
 import React from 'react';
 import Dashboard from './dashboard';

@@ -1,0 +1,47 @@
+@import 'bootstrap-rtl.css';
+
+.active-port a svg {
+  background: #f5f5f5;
+  padding: 3px;
+  border-radius: 8px;
+  fill: #202020;
+}
+
+.active-port a svg:hover {
+  background: white;
+  animation: portal-icon-background 600ms;
+  animation-fill-mode: forwards;
+}
+
+.active-port a {
+       color: #202020;
+       outline: 0;
+       text-decoration: none;
+   }
+
+.inactive-port svg {
+  fill: #9C9C9C;
+  cursor: not-allowed;
+}
+
+@keyframes portal-icon-background {
+    0% {
+        background: #f5f5f5;
+        fill: #202020;
+    }
+
+    100% {
+        background: #202020;
+        fill: #fff;
+    }
+}
+
+@keyframes portal-icon-a {
+    0% {
+        background: #999;
+    }
+
+    100% {
+        background: #222;
+    }
+}
