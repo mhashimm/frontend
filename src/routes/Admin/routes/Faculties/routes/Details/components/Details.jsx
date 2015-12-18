@@ -3,7 +3,7 @@ import React, { PropTypes } from 'react'
 
 var Details = (props) =>
   <div>
-    <h3>معلومات الكلىة</h3>
+    <h3>معلومات الكلية</h3>
     <br/>
     <dl class="dl-horizontal">
       <div className="row">

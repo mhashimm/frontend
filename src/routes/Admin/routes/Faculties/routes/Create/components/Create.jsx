@@ -12,7 +12,7 @@ class Create extends React.Component {
         <form>
           <Input type="text" label="إسم الكلية" placeholder="إسم الكلية"/>
           <Input type="text" label="الإسم بالإنجليزية" placeholder="الإسم بالإنجليزية"/>
-          <Input type="text" label="الإختصار" placeholder="أدخل الإختصار هنا" help="* يستخدم في تعريف الكلىة, يمكن أن يتكون من احرف أو أرقام إنجليزية"/>
+          <Input type="text" label="الإختصار" placeholder="أدخل الإختصار هنا" help="* يستخدم في تعريف الكلية, يمكن أن يتكون من احرف أو أرقام إنجليزية" />
           <ButtonToolbar>
             <Button  type="reset">إلغاء</Button>
             <Button bsStyle="primary" type="submit">حفظ</Button>

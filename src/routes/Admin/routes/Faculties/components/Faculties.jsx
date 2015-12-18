@@ -1,7 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router';
 
-require("font-awesome-webpack");
+require('font-awesome-webpack');
 
 var facs = [
   {'id': 'med', 'title': 'jhjhjh', 'titleTr': 'jhjhjhj', 'active': true},
@@ -13,7 +13,17 @@ class Faculties extends React.Component {
     return (
       <div>
         {this.props.children ||
-        (<FacultyTable faculties={facs}/>)}
+        (
+          <div>
+            <h3>قائمة الكليات</h3>
+            <Link className="btn btn-default pull-left" to={`/admin/faculties/create`}>
+              <i className="fa fa-plus" style={{paddingLeft:5}}></i>
+              إضافة كلية
+            </Link>
+            <br/><br/>
+            <FacultyTable faculties={facs}/>
+          </div>
+        )}
       </div>
     );
   }
@@ -27,7 +37,6 @@ const stylesLast ={ paddingRight: 10}
 
 var FacultyTable = (props) =>
   <div>
-    <h3>قائمة الكليات</h3>
     <table className="table table-striped table-bordered table-hover">
       <thead>
         <tr>
@@ -66,9 +75,6 @@ var FacultyRow = (props) =>
       </Link>
     </td>
   </tr>;
-
-
-
 
 
 module.exports = Faculties

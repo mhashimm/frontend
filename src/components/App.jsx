@@ -4,6 +4,7 @@ import React from 'react';
 import Dashboard from './dashboard';
 
 require('../styles/style.css');
+require('../fonts/JF-Flat-Regular.woff');
 
 class App extends React.Component {
   render() {
