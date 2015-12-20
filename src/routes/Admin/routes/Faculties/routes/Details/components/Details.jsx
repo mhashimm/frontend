@@ -1,7 +1,30 @@
 import React, { PropTypes } from 'react'
 
+const styles = {
+  color: '#3C3C3C'
+}
 
-var Details = (props) =>
+class Details extends React.Component {
+  constructor(props){
+    super(props);
+    //props.faculty = facs.filter(f => f.id === props.params.id);
+    //props.test = 'testtttttt';
+  }
+  render(){
+    return(
+      // <p> {this.props.faculty.title} </p>
+      <ul>
+        {
+          this.props.map(p =>
+          <li>{p}</li>
+        )}
+      </ul>
+      );
+   }
+}
+
+var FacultyDetails = (props) =>
+
   <div>
     <h3>معلومات الكلية</h3>
     <br/>
@@ -23,13 +46,18 @@ var Details = (props) =>
         </div>
         <div className="col-md-6">
           <dt>نشطة</dt>
-          <dd>{props.active}</dd>
+          <dd>{props.active
+              ?
+              <i className="fa fa-check fa-2x" style={styles}></i>
+              :
+              <i className="fa fa-times fa-2x" style={styles}></i>}
+          </dd>
         </div>
       </div>
     </dl>
   </div>;
 
-  Details.propTypes = {
+  FacultyDetails.propTypes = {
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     titleTr: PropTypes.string,

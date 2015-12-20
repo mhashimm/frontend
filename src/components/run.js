@@ -2,11 +2,20 @@ import React from 'react'
 import { render } from 'react-dom'
 import { createHistory, useBasename } from 'history'
 import { Router } from 'react-router'
-//import App from './Main';
+import { createStore, combineReducers } from 'redux'
+import { Provider } from 'react-redux'
+import { syncReduxAndRouter, routeReducer } from 'redux-simple-router'
 
-const history = useBasename(createHistory)({
-  basename: '/'
-})
+import facultyReducers from '../stores/admin/facultyReducers'
+
+const reducer = combineReducers({facultyReducers ,
+  routing: routeReducer})
+
+const store = createStore(reducer)
+
+const history = useBasename(createHistory)({ basename: '/' })
+
+syncReduxAndRouter(history, store)
 
 const rootRoute = {
   component: 'div',
@@ -23,6 +32,8 @@ const rootRoute = {
 //ReactDOM.render(<App />, document.getElementById('app'));
 
 render(
-  <Router history={history} routes={rootRoute} />,
+  <Provider store={store}>
+    <Router history={history} routes={rootRoute} />
+  </Provider>,
   document.getElementById('app')
 )
