@@ -1,12 +1,16 @@
-require('styles/main.scss');
+//require('styles/style.css');
 
 import React from 'react';
 import Dashboard from './dashboard';
+import { pushPath } from 'redux-simple-router';
+
+require('../styles/style.css');
+require('../fonts/JF-Flat-Regular.woff');
 
 class App extends React.Component {
   render() {
     return (
-      <div>
+      <div className="container">
           { this.props.children || <Dashboard /> }
       </div>
     );

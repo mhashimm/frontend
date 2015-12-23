@@ -13,7 +13,7 @@ module.exports = {
 
   getComponent(location, cb) {
     require.ensure([], (require) => {
-      cb(null, require('./components/Faculties'))
+      cb(null, require('./components/FacultiesComponent'))
     })
   }
 }
