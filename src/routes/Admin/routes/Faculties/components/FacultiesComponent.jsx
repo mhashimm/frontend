@@ -8,7 +8,7 @@ class FacultiesComponent extends React.Component {
 
 
   render(){
-    const {dispatch, faculties} = this.props
+    const {faculties} = this.props
     return (
       <div>
         {this.props.children ||
@@ -31,8 +31,6 @@ class FacultiesComponent extends React.Component {
 const styles = {
   color: '#3C3C3C'
 }
-
-const stylesLast = { paddingRight: 10}
 
 var FacultyTable = (props) =>
   <div>
@@ -59,7 +57,7 @@ var FacultyRow = (props) =>
     <td>{props.id}</td>
     <td>{props.title}</td>
     <td>{props.titleTr}</td>
-    <td>{props.active
+    <td>{props.isActive
         ?
         <i className="fa fa-check fa-2x" style={styles}></i>
         :
@@ -75,9 +73,4 @@ var FacultyRow = (props) =>
     </td>
   </tr>;
 
-
-function select(state) {
-    return {faculties: state.facultyReducers}
-}
-
-module.exports = connect(select)(FacultiesComponent)
+module.exports = connect(state => ({faculties: state.facultyReducers}))(FacultiesComponent)

@@ -5,11 +5,16 @@ import { Router } from 'react-router'
 import { createStore, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
 import { syncReduxAndRouter, routeReducer } from 'redux-simple-router'
+import {reducer as formReducer} from 'redux-form'
 
 import facultyReducers from '../stores/admin/facultyReducers'
 
-const reducer = combineReducers({facultyReducers ,
-  routing: routeReducer})
+const reducer = combineReducers({
+  facultyReducers ,
+  form: formReducer,
+  routing: routeReducer
+  }
+)
 
 const store = createStore(reducer)
 
@@ -27,9 +32,6 @@ const rootRoute = {
     ]
   } ]
 }
-
-// Render the main component into the dom
-//ReactDOM.render(<App />, document.getElementById('app'));
 
 render(
   <Provider store={store}>

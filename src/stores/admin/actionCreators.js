@@ -1,7 +1,6 @@
 import {CREATE_FACULTY, UPDATE_FACULTY} from './actionTypes'
 
 export function createFaculty(faculty){
-  alert(faculty.title)
   return {
     type: CREATE_FACULTY,
     faculty

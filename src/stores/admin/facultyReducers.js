@@ -1,23 +1,24 @@
 import {CREATE_FACULTY, UPDATE_FACULTY} from './actionTypes'
 
 var facs = [
-  {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'active': true},
-  {'id': 'law', 'title': 'كلية القانون', 'titleTr': 'Law School', 'active': false},
-  {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'active': true}
+  {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'isActive': true},
+  {'id': 'law', 'title': 'كلية القانون', 'titleTr': 'Law School', 'isActive': false},
+  {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'isActive': true}
 ]
 
 function facultyReducers(state = facs, action){
-  return facs;
   switch (action.type) {
     case CREATE_FACULTY:
       return [
-        ...state,
-        Object.assign({}, action.faculty, {active: true})
+        Object.assign({}, action.faculty, {isActive: true}),
+        ...state
       ]
     case UPDATE_FACULTY:
+      const index = state.findIndex(f => f.id === action.faculty.id)
       return [
-        ...state.filter(f => f.id !== action.faculty.id),
-        Object.assign({}, action.faculty, {id: action.faculty.id})
+        ...state.slice(0, index),
+        action.faculty,
+        ...state.slice(index + 1)
       ]
     default:
       return state
