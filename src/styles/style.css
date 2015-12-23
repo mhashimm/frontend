@@ -1,4 +1,54 @@
+@import 'normalize.css';
 @import 'bootstrap-rtl.css';
+
+@font-face {
+    font-family: "JF Flat Regular";
+    src: url('/fonts/JF-Flat-regular.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+html {
+  font-family: "JF Flat Regular", sans-serif !important;
+}
+
+body {
+  font-family: "JF Flat Regular", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.h1,
+.h2,
+.h3,
+.h4,
+.h5,
+.h6 {
+  font-family: "JF Flat Regular", "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+  font-weight: 900 !important;
+  line-height: 1.1;
+}
+
+h1 small,
+h2 small,
+h3 small,
+h4 small,
+h5 small,
+h6 small,
+.h1 small,
+.h2 small,
+.h3 small,
+.h4 small,
+.h5 small,
+.h6 small {
+  font-weight: normal;
+  line-height: 1;
+  color: #999999;
+}
 
 .active-port a svg {
   background: #f5f5f5;
