@@ -2,8 +2,10 @@
 
 import React from 'react';
 import Dashboard from './dashboard';
+import { pushPath } from 'redux-simple-router';
 
 require('../styles/style.css');
+require('../fonts/JF-Flat-Regular.woff');
 
 class App extends React.Component {
   render() {
