@@ -2,21 +2,17 @@ import React from 'react'
 import { render } from 'react-dom'
 import { createHistory, useBasename } from 'history'
 import { Router } from 'react-router'
-import { createStore, combineReducers } from 'redux'
 import { Provider } from 'react-redux'
-import { syncReduxAndRouter, routeReducer } from 'redux-simple-router'
-import {reducer as formReducer} from 'redux-form'
+import DevTools from './DevTools'
+import { syncReduxAndRouter} from 'redux-simple-router'
 
-import facultyReducers from '../stores/admin/facultyReducers'
+import configureStore from '~/stores/configureStore'
 
-const reducer = combineReducers({
-  facultyReducers ,
-  form: formReducer,
-  routing: routeReducer
-  }
-)
 
-const store = createStore(reducer)
+
+
+
+const store = configureStore()
 
 const history = useBasename(createHistory)({ basename: '/' })
 
@@ -35,7 +31,10 @@ const rootRoute = {
 
 render(
   <Provider store={store}>
-    <Router history={history} routes={rootRoute} />
+    <div>
+      <DevTools />
+      <Router history={history} routes={rootRoute} />
+    </div>
   </Provider>,
   document.getElementById('app')
 )

@@ -73,4 +73,4 @@ var FacultyRow = (props) =>
     </td>
   </tr>;
 
-module.exports = connect(state => ({faculties: state.facultyReducers}))(FacultiesComponent)
+module.exports = connect(state => ({faculties: state.faculties}))(FacultiesComponent)
