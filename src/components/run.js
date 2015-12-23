@@ -8,14 +8,8 @@ import { syncReduxAndRouter} from 'redux-simple-router'
 
 import configureStore from '~/stores/configureStore'
 
-
-
-
-
 const store = configureStore()
-
 const history = useBasename(createHistory)({ basename: '/' })
-
 syncReduxAndRouter(history, store)
 
 const rootRoute = {
