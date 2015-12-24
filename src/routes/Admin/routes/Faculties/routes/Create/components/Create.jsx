@@ -118,4 +118,4 @@ let ReduxForm = reduxForm({
   })
 )(CreateFacultyForm);
 
-module.exports = connect((state) => ({faculties: state.facultyReducers}))(Create)
+module.exports = connect((state) => ({faculties: state.faculties}))(Create)
