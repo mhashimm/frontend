@@ -79,4 +79,4 @@ const ReduxForm = reduxForm({
 )(UpdateFacultyForm);
 
 
-module.exports = connect((state) => ({faculties: state.facultyReducers}))(Update)
+module.exports = connect((state) => ({faculties: state.faculties}))(Update)
