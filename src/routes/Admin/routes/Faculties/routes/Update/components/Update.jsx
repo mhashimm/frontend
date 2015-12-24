@@ -9,7 +9,7 @@ var Switch = require('react-bootstrap-switch');
 import { createValidator } from '~/utils/validate';
 import { updateFaculty } from '~/stores/admin/actionCreators';
 import facultyValidator from '../../../validation';
-import InputElement from '~/routes/Admin/components/inputElement';
+import InputElement from '~/components/InputElement';
 
 class Update extends Component {
   render(){

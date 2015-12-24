@@ -6,10 +6,10 @@ import { pushPath } from 'redux-simple-router';
 import { createFaculty } from '~/stores/admin/actionCreators';
 import { createValidator } from '~/utils/validate';
 import facultyValidator from '../../../validation';
+import InputElement from '~/components/InputElement'
 
 class Create extends React.Component {
   render(){
-
     return (
       <div>
         <h3>إضافة كلية</h3>
@@ -45,57 +45,10 @@ class CreateFacultyForm extends React.Component {
     return (
       <div>
         <form onSubmit={handleSubmit} className="form-horizontal">
-            {(title.touched && title.error) ?
-              (<div className="form-group has-error">
-                <label className="col-md-2 control-label text-danger">إسم الكلية</label>
-                <div className="col-md-7">
-                <input className="form-control" type="text" {...title} placeholder="إسم الكلية"></input>
-                </div>
-              <label className="col-md-3 text-danger" >{title.error}</label>
-              </div>)
-            :
-            (<div className="form-group">
-              <label className="col-md-2 control-label">إسم الكلية</label>
-              <div className="col-md-10">
-                <input className="form-control" type="text" {...title} placeholder="إسم الكلية"></input>
-              </div>
-            </div>)
-            }
-
-            {(titleTr.touched && titleTr.error) ?
-              (<div className="form-group has-error">
-                <label className="col-md-2 control-label text-danger">الإسم بالإنجليزية</label>
-                <div className="col-md-7">
-                <input className="form-control" type="text" {...titleTr} placeholder="الإسم بالإنجليزية"></input>
-                </div>
-              <label className="col-md-3 text-danger vcenter" >{titleTr.error}</label>
-              </div>)
-            :
-            (<div className="form-group">
-              <label className="col-md-2 control-label">الإسم بالإنجليزية</label>
-              <div className="col-md-10">
-                <input className="form-control" type="text" {...titleTr} placeholder="الإسم بالإنجليزية"></input>
-              </div>
-            </div>)
-            }
-
-            {(id.touched && id.error) ?
-              (<div className="form-group has-error">
-                <label className="col-md-2 control-label text-danger">الإختصار</label>
-                <div className="col-md-7">
-                <input className="form-control" type="text" {...id} placeholder="الإختصار"></input>
-                </div>
-              <label className="col-md-3 text-danger" >{id.error}</label>
-              </div>)
-            :
-            (<div className="form-group">
-              <label className="col-md-2 control-label">الإختصار</label>
-              <div className="col-md-10">
-                <input className="form-control" type="text" {...id} placeholder="الإختصار"></input>
-              </div>
-            </div>)
-            }
-
+          <InputElement field={id} placeholder="أدخل الإختصار" label="الإختصار"
+            help="أحرف أو أرقام أو أحرف و أرقام بالإنجليزية فقط و يجب أن يكون فريداً"/>
+          <InputElement field={title} placeholder="أدخل إسم الكلية" label="إسم الكلية"/>
+          <InputElement field={titleTr} placeholder="أدخل إسم الكلية بالإنجليزية" label="الإسم بالإنجليزية"/>
           <div className="form-group">
             <div className="col-md-12 col-md-offset-2">
               <button className="btn" disabled={submitting} onClick={resetForm}>إسترجاع</button>
@@ -113,7 +66,7 @@ let ReduxForm = reduxForm({
   fields: ['id', 'title', 'titleTr'],
   validate: createValidator(facultyValidator)
   },
-  state => ({
+  () => ({
     initialValues: {id: '', title:'', titleTr:''}
   })
 )(CreateFacultyForm);

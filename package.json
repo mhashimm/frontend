@@ -7,8 +7,8 @@
   "scripts": {
     "clean": "rimraf dist/*",
     "copyfonts": "copyfiles -f ./src/fonts/* ./dist/fonts",
-    "copyfiles": "copyfiles -f ./src/index.html ./src/fonts ./src/favicon.ico ./dist",
-    "dist": "npm run copyfonts & copyfiles & webpack --env=dist",
+    "copyfiles": "npm run copyfonts & copyfiles -f ./src/index.html ./src/fonts ./src/favicon.ico ./dist",
+    "dist": "npm run copyfiles & webpack --env=dist",
     "lint": "eslint ./src",
     "posttest": "npm run lint",
     "release:major": "npm version major && npm publish && git push --follow-tags",
@@ -21,8 +21,8 @@
     "test:watch": "karma start --autoWatch=true --singleRun=false"
   },
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/sisdn/sisdn.git"
+    "type": "git",
+    "url": "https://github.com/sisdn/sisdn.git"
   },
   "keywords": [
     "student",
@@ -31,7 +31,7 @@
     "sudan",
     "arabic"
   ],
-  "author": "Mohammed Hashim <mhashim dot gm at gmail dot com",
+  "author": "Mohammed Hashim <mhashim dot gm at gmail dot com>",
   "devDependencies": {
     "babel-core": "^6.3.21",
     "babel-eslint": "^5.0.0-beta6",
@@ -43,14 +43,13 @@
     "babel-root-import": "^3.1.0",
     "bower-webpack-plugin": "^0.1.9",
     "chai": "^3.2.0",
-    "copy-dir": "0.0.8",
     "copyfiles": "^0.2.1",
     "css-loader": "^0.23.0",
     "eslint": "^1.2.1",
     "eslint-loader": "^1.0.0",
     "eslint-plugin-react": "^3.3.0",
+    "extract-text-webpack-plugin": "^0.9.1",
     "file-loader": "^0.8.4",
-    "foundation-sites": "^6.0.5",
     "glob": "^6.0.0",
     "isparta-instrumenter-loader": "^1.0.0",
     "karma": "^0.13.9",
@@ -71,6 +70,7 @@
     "phantomjs": "^1.9.18",
     "postcss": "^5.0.11",
     "postcss-loader": "^0.8.0",
+    "react-addons-test-utils": "^0.14.0",
     "react-hot-loader": "^1.2.9",
     "react-transform-hmr": "^1.0.1",
     "redux-devtools": "^3.0.0",
@@ -84,9 +84,7 @@
     "webpack-dev-server": "^1.12.0"
   },
   "dependencies": {
-    "alt": "^0.18.1",
     "core-js": "^1.2.6",
-    "extract-text-webpack-plugin": "^0.9.1",
     "font-awesome": "^4.5.0",
     "font-awesome-webpack": "0.0.4",
     "history": "^1.13.1",
@@ -94,7 +92,6 @@
     "node-uuid": "^1.4.7",
     "normalize.css": "^3.0.3",
     "react": "^0.14.3",
-    "react-addons-test-utils": "^0.14.0",
     "react-bootstrap-switch": "^3.4.0",
     "react-dom": "^0.14.3",
     "react-redux": "^4.0.2",

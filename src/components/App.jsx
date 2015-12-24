@@ -1,11 +1,10 @@
 //require('styles/style.css');
 
-import React from 'react';
-import Dashboard from './dashboard';
-import { pushPath } from 'redux-simple-router';
+import React from 'react'
+import Dashboard from './dashboard'
 
-require('../styles/style.css');
-require('../fonts/JF-Flat-Regular.woff');
+require('../styles/style.css')
+//require('../fonts/JF-Flat-Regular.woff')
 
 class App extends React.Component {
   render() {

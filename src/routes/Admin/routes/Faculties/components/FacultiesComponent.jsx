@@ -1,12 +1,13 @@
 import React from 'react'
 import {Link} from 'react-router'
 import { connect } from 'react-redux'
+import { IconBool } from '~/components/Elements'
 
-require('font-awesome-webpack')
+const styles = {
+
+}
 
 class FacultiesComponent extends React.Component {
-
-
   render(){
     const {faculties} = this.props
     return (
@@ -15,9 +16,9 @@ class FacultiesComponent extends React.Component {
         (
           <div>
             <h3>قائمة الكليات</h3>
-            <Link className="btn btn-default pull-left" to={`/admin/faculties/create`}>
+            <Link className="btn btn-primary pull-left" to={`/admin/faculties/create`}>
               <i className="fa fa-plus" style={{paddingLeft:5}}></i>
-              إضافة كلية
+              إضافة
             </Link>
             <br/><br/>
             <FacultyTable faculties={faculties}/>
@@ -26,10 +27,6 @@ class FacultiesComponent extends React.Component {
       </div>
     );
   }
-}
-
-const styles = {
-  color: '#3C3C3C'
 }
 
 var FacultyTable = (props) =>
@@ -57,11 +54,8 @@ var FacultyRow = (props) =>
     <td>{props.id}</td>
     <td>{props.title}</td>
     <td>{props.titleTr}</td>
-    <td>{props.isActive
-        ?
-        <i className="fa fa-check fa-2x" style={styles}></i>
-        :
-        <i className="fa fa-times fa-2x" style={styles}></i>}
+    <td>
+      <IconBool value={props.isActive}/>
     </td>
     <td>
       <Link to={`/admin/faculties/update/${props.id}`} style={styles}>

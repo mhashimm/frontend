@@ -1,24 +1,22 @@
 import React, { PropTypes } from 'react'
-
-const styles = {
-  color: '#3C3C3C'
-}
+import { connect } from 'react-redux';
+import { Link } from 'react-router'
+import { TextBool } from '~/components/Elements'
 
 class Details extends React.Component {
-  constructor(props){
-    super(props);
-    //props.faculty = facs.filter(f => f.id === props.params.id);
-    //props.test = 'testtttttt';
-  }
   render(){
+    const faculty = this.props.faculties.find(f => f.id === this.props.params.id)
     return(
-      // <p> {this.props.faculty.title} </p>
-      <ul>
-        {
-          this.props.map(p =>
-          <li>{p}</li>
-        )}
-      </ul>
+      <div>
+        <h3>معلومات الكلية</h3>
+        <Link className="btn btn-primary pull-left" to={`/admin/faculties/update/${faculty.id}`}>
+        <i className="fa fa-pencil-square-o" style={{paddingLeft:5}}></i>
+        تعديل
+        </Link>
+        <br/>
+        <br/>
+        <FacultyDetails {...faculty}/>
+      </div>
       );
    }
 }
@@ -26,9 +24,8 @@ class Details extends React.Component {
 var FacultyDetails = (props) =>
 
   <div>
-    <h3>معلومات الكلية</h3>
     <br/>
-    <dl class="dl-horizontal">
+    <dl className="dl-horizontal">
       <div className="row">
         <div className="col-md-6">
           <dt>إسم الكلية</dt>
@@ -46,11 +43,8 @@ var FacultyDetails = (props) =>
         </div>
         <div className="col-md-6">
           <dt>نشطة</dt>
-          <dd>{props.active
-              ?
-              <i className="fa fa-check fa-2x" style={styles}></i>
-              :
-              <i className="fa fa-times fa-2x" style={styles}></i>}
+          <dd>
+            <TextBool value={props.isActive} />
           </dd>
         </div>
       </div>
@@ -61,7 +55,7 @@ var FacultyDetails = (props) =>
     id: PropTypes.string.isRequired,
     title: PropTypes.string.isRequired,
     titleTr: PropTypes.string,
-    active: PropTypes.bool.isRequired
+    isActive: PropTypes.bool.isRequired
   }
 
-module.exports = Details
+module.exports = connect((state) => ({faculties: state.faculties}))(Details)
