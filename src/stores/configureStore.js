@@ -1,7 +1,7 @@
 const config = require('config')
 
-if (config.default.appEnv === 'dist') {
+if (process.env.NODE_ENV === 'production') {
   module.exports = require('./configureStore.prod');
-} else if (config.default.appEnv === 'dev' || config.default.appEnv === 'test') {
+} else {
   module.exports = require('./configureStore.dev');
 }
