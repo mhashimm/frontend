@@ -35,6 +35,7 @@ export function logout(){
 
 export function login(){
   return function(dispatch, getState){
+    dispatch(beginLogin())
     const keycloak = new  keycloakObject({...keycloakConf})
     return keycloak.init({ onLoad: 'login-required' })
     .success(authenticated => authenticated

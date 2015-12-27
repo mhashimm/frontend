@@ -24,8 +24,6 @@ class App extends React.Component {
   }
 }
 
-
-
 module.exports = connect(
   state => ({auth: state.auth}),
   dispatch => ({actions: bindActionCreators(actionCreators, dispatch)})

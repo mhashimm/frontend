@@ -1,11 +1,13 @@
-import { BEGIN_LOGIN, LOGIN_SUCCESS, login } from './actions'
+import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, login } from './actions'
 
-export function loginReducer(state = {authenticated: false}, action){
+export function loginReducer(state = {authenticated: false, pending: true}, action){
   switch (action.type) {
     case BEGIN_LOGIN:
-      return state;
+      return Object.assign({}, state, {authenticated: false, pending: true})
     case LOGIN_SUCCESS:
-      return Object.assign({}, state, parseToken(action.token), { authenticated: true})
+      return Object.assign({}, state, parseToken(action.token), { authenticated: true, pending: false})
+    case LOGIN_FAILURE:
+      return Object.assign({}, state, {authenticated: false, pending: false})
     default:
       return state
   }
