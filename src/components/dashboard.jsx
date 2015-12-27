@@ -1,17 +1,23 @@
 
-import React from 'react';
-import { Link } from 'react-router';
+import React, { Component } from 'react'
+import { Link } from 'react-router'
+import { connect } from 'react-redux'
 
-export default class Dashboard extends React.Component {
+import Loading from '~/components/Loading'
+
+class Dashboard extends Component {
   render() {
-    return(
-        <div className="row">
-          <TeacherPort active={true} />
-          <AdminPort active={true}/>
-          <RegistrationPort active={false} />
-          <AdmissionPort active={true} />
-          <ReportsPort active={true} />
-        </div>);
+    if(this.props.user.authenticated)
+      return(
+          <div className="row">
+            <TeacherPort active={true} />
+            <AdminPort active={true}/>
+            <RegistrationPort active={false} />
+            <AdmissionPort active={true} />
+            <ReportsPort active={true} />
+          </div>)
+    else
+      return(<h1 className="text-center">جاري التحميل</h1>)
   }
 }
 
@@ -119,3 +125,5 @@ var ReportsPort = (props) => {
         <ReportsPortBackground/>
       </div>);
 }
+
+module.exports = connect(state => ({user: state.user}))(Dashboard)
