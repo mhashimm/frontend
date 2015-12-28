@@ -1,4 +1,3 @@
-import kefir from 'kefir'
 import keycloakConf from './keycloakConf'
 const keycloakObject = require('keycloak')
 
@@ -34,7 +33,7 @@ export function logout(){
 }
 
 export function login(){
-  return function(dispatch, getState){
+  return function(dispatch){
     dispatch(beginLogin())
     const keycloak = new  keycloakObject({...keycloakConf})
     return keycloak.init({ onLoad: 'login-required' })

@@ -2,7 +2,6 @@ export const FACULTY_CREATED = 'FACULTY_CREATED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_SAVED = 'FACULTY_SAVED'
 export const FACULTY_FAILED = 'FACULTY_FAILED'
-//export const GET_FACULTY    = 'GET_FACULTY'
 
 export function facultyCreated(faculty){
   return {
@@ -29,5 +28,18 @@ export function facultyFailed(faculty){
   return{
     type: FACULTY_FAILED,
     faculty
+  }
+}
+
+export function createFaculty(faculty){
+  return function(dispatch, getState){
+    dispatch(facultyCreated(faculty))
+    localStorage.setItem(faculty.id, faculty)
+  }
+}
+
+export function updateFaculty(faculty){
+  return function(dispatch, getState){
+    dispatch(facultyUpdated(faculty))
   }
 }

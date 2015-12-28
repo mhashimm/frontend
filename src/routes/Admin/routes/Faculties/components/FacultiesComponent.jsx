@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import {Link} from 'react-router'
 import { connect } from 'react-redux'
 import { IconBool } from '~/components/Elements'
+import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
 
 const styles = {
 
@@ -20,9 +21,10 @@ class FacultiesComponent extends Component {
             <Link className="btn btn-primary pull-left" to={`/admin/faculties/create`}>
               <i className="fa fa-plus" style={{paddingLeft:5}}></i>
               إضافة
-              <FacultyTable faculties={faculties}/>
+
             </Link>
             <br/><br/>
+            <FacultyTable faculties={faculties}/>
           </div>
         )}
       </div>
@@ -51,7 +53,7 @@ var FacultyTable = (props) =>
   </div>;
 
 var FacultyRow = (props) =>
-  <tr>
+  <tr className={getClass(props.status)}>
     <td>{props.id}</td>
     <td>{props.title}</td>
     <td>{props.titleTr}</td>
@@ -67,5 +69,12 @@ var FacultyRow = (props) =>
       </Link>
     </td>
   </tr>;
+
+function getClass(prop) {
+  if(prop === PENDING) return 'warning'
+  else if(prop === SUCCESS) return 'success'
+  else if(prop === FAILURE) return 'danger'
+  else return ''
+}
 
 module.exports = connect(state => ({faculties: state.faculties}))(FacultiesComponent)
