@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import {Link} from 'react-router'
 import { connect } from 'react-redux'
 import { IconBool } from '~/components/Elements'
@@ -7,8 +7,9 @@ const styles = {
 
 }
 
-class FacultiesComponent extends React.Component {
+class FacultiesComponent extends Component {
   render(){
+    window.console.log(this.props)
     const {faculties} = this.props
     return (
       <div>
@@ -19,9 +20,9 @@ class FacultiesComponent extends React.Component {
             <Link className="btn btn-primary pull-left" to={`/admin/faculties/create`}>
               <i className="fa fa-plus" style={{paddingLeft:5}}></i>
               إضافة
+              <FacultyTable faculties={faculties}/>
             </Link>
             <br/><br/>
-            <FacultyTable faculties={faculties}/>
           </div>
         )}
       </div>

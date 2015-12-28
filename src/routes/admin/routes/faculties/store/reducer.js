@@ -1,4 +1,4 @@
-import {CREATE_FACULTY, UPDATE_FACULTY} from './actionTypes'
+import { FACULTY_CREATED, FACULTY_UPDATED } from './actions'
 
 var facs = [
   {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'isActive': true},
@@ -6,14 +6,15 @@ var facs = [
   {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'isActive': true}
 ]
 
-function facultyReducers(state = facs, action){
+function facultyReducer(state = facs, action){
+  window.console.log('KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK')
   switch (action.type) {
-    case CREATE_FACULTY:
+    case FACULTY_CREATED:
       return [
         Object.assign({}, action.faculty, {isActive: true}),
         ...state
       ]
-    case UPDATE_FACULTY:
+    case FACULTY_UPDATED:
       const index = state.findIndex(f => f.id === action.faculty.id)
       return [
         ...state.slice(0, index),
@@ -25,4 +26,4 @@ function facultyReducers(state = facs, action){
   }
 }
 
-module.exports = facultyReducers;
+module.exports = facultyReducer;

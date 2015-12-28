@@ -4,10 +4,10 @@ module.exports = {
   getChildRoutes(location, cb) {
     require.ensure([], (require) => {
       cb(null, [
-        require('./routes/Faculties'),
-        require('./routes/Departments'),
-        require('./routes/Courses'),
-        require('./routes/Programs')
+        require('./routes/faculties'),
+        require('./routes/departments'),
+        require('./routes/courses'),
+        require('./routes/programs')
       ])
     })
   },

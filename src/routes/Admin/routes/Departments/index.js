@@ -4,9 +4,9 @@ module.exports = {
   getChildRoutes(location, cb) {
     require.ensure([], (require) => {
       cb(null, [
-        require('./routes/Create'),
-        require('./routes/Details'),
-        require('./routes/Update')
+        require('./routes/create'),
+        require('./routes/details'),
+        require('./routes/update')
       ])
     })
   },

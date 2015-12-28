@@ -8,8 +8,8 @@ class Admin extends React.Component {
         <br/>
         { this.props.children || (
         <div className="row">
-          <FacultiesPort active={true} />
           <DepartmentsPort active={true} />
+          <FacultiesPort active={true} />
           <CoursesPort active={true} />
           <ProgramsPort active={true} />
         </div>)}

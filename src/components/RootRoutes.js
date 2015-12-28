@@ -5,7 +5,7 @@ const RootRoute = {
     path: '/',
     component: require('./App'),
     childRoutes: [
-      require('../routes/Admin')
+      require('../routes/admin')
     ]
   } ]
 }

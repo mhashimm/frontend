@@ -7,7 +7,7 @@ require('../../../../../../../styles/react-bootstrap-switch.css');
 var Switch = require('react-bootstrap-switch');
 
 import { createValidator } from '~/utils/validate';
-import { updateFaculty } from '~/stores/admin/actionCreators';
+import { facultyUpdated } from '../../../store/actions';
 import facultyValidator from '../../../validation';
 import InputElement from '~/components/InputElement';
 
@@ -24,7 +24,7 @@ class Update extends Component {
 
   handleSubmit(faculty){
     const {dispatch} = this.props;
-    dispatch(updateFaculty(faculty))
+    dispatch(facultyUpdated(faculty))
     dispatch(pushPath('/admin/faculties'))
   }
 }

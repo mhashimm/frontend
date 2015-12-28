@@ -3,10 +3,10 @@ import { routeReducer } from 'redux-simple-router'
 import {reducer as formReducer} from 'redux-form'
 
 import { loginReducer } from './login/loginReducer'
-import facultyReducers from './admin/facultyReducers'
+import {facultyReducer} from '../routes/admin/routes/faculties/store/reducer'
 
 const rootReducer = combineReducers({
-  faculties: facultyReducers,
+  faculties: facultyReducer,
   form: formReducer,
   routing: routeReducer,
   user: loginReducer

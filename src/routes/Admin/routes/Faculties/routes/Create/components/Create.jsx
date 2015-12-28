@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
 import { pushPath } from 'redux-simple-router';
 
-import { createFaculty } from '~/stores/admin/actionCreators';
+import { facultyCreated } from '../../../store/actions';
 import { createValidator } from '~/utils/validate';
 import facultyValidator from '../../../validation';
 import InputElement from '~/components/InputElement'
@@ -21,7 +21,7 @@ class Create extends React.Component {
 
   handleSubmit(faculty) {
     const {dispatch} = this.props;
-    dispatch(createFaculty(faculty));
+    dispatch(facultyCreated(faculty));
     dispatch(pushPath('/admin/faculties'));
   }
 }
