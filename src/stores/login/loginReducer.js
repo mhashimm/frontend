@@ -1,3 +1,4 @@
+import config from 'config'
 import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE } from './actions'
 
 export function loginReducer(state = {authenticated: false, pending: true}, action){
@@ -14,10 +15,17 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
 }
 
 function parseToken(token){
-  return {
-    username: token.preferred_username,
-    departments: token.departments.slice(),
-    groups: token.groups.slice(),
-    claims: token.claims.slice()
-  }
+  if(config.appEnv === 'dist')
+    return {
+      username: token.preferred_username,
+      departments: token.departments.slice(),
+      groups: token.groups.slice(),
+      claims: token.claims.slice()
+    }
+  else
+    return{
+      username: 'محمد',
+      departments: ['math', 'bio'],
+      groups: ['admin', 'dean', 'professor', 'report', 'admitter']
+    }
 }

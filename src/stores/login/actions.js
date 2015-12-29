@@ -1,4 +1,4 @@
-import keycloakConf from './keycloakConf'
+import config from 'config'
 const keycloakObject = require('keycloak')
 
 
@@ -35,12 +35,15 @@ export function logout(){
 export function login(){
   return function(dispatch){
     dispatch(beginLogin())
-    const keycloak = new  keycloakObject({...keycloakConf})
-    return keycloak.init({ onLoad: 'login-required' })
-      .success(authenticated => authenticated
-        ? dispatch(loginSuccess(keycloak.idTokenParsed))
-        : dispatch(loginFailure()))
-      .error(
-        error => dispatch(loginFailure(error)))
+    if(config.appEnv === 'dist'){
+      const keycloak = new  keycloakObject(config.keycloak)
+      return keycloak.init({ onLoad: 'login-required' })
+        .success(authenticated => authenticated
+          ? dispatch(loginSuccess(keycloak.idTokenParsed))
+          : dispatch(loginFailure()))
+        .error(
+          error => dispatch(loginFailure(error)))
+    }
+    else dispatch(loginSuccess())
   }
 }
