@@ -3,6 +3,7 @@
 import Dexie from 'Dexie'
 import config from 'config'
 
+import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
 export const FACULTY_CREATED = 'FACULTY_CREATED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_SAVED = 'FACULTY_SAVED'
@@ -29,16 +30,50 @@ export function facultySaved(faculty){
   }
 }
 
-export function facultyFailed(faculty){
+export function facultyFailed(faculty, error){
   return{
     type: FACULTY_FAILED,
-    faculty
+    faculty,
+    error
   }
 }
 
 export function createFaculty(faculty){
   return function(dispatch, getState){
     dispatch(facultyCreated(faculty))
+  }
+}
+
+export function createFaculty(faculty){
+  return function(dispatch, getState){
+    let dbError = false
+    dispatch(facultyCreated(faculty))
+    var db = CreateDb()
+    db.facultyTable.add(Object.assign({}, faculty, { status: PENDING }))
+    .catch( error => dbError = true)
+
+    fetch(config.apiUrl + '/faculties',{
+      method: 'POST',
+      body: JSON.stringify(faculty),
+      mode: 'cors',
+      headers: new Headers({
+        'Authorization':  'Bearer ' + window.keycloak.token,
+        'Content-Type' :  'application/json'
+      })
+    }).then(response => {
+      if(response.status == 201){
+        dispatch(facultySaved(faculty))
+        db.facultyTable.update(faculty.id, { status : SUCCESS})
+      }
+      else {
+         dispatch(facultyFailed(faculty))
+         db.facultyTable.update(faculty.id, { status : FAILURE})
+      }
+    }
+    ).catch(error => {
+      dispatch(facultyFailed(faculty))
+      db.facultyTable.update(faculty.id, { status : FAILURE})
+    })
   }
 }
 
@@ -52,19 +87,28 @@ export function updateFaculty(faculty){
       .then(() => db.facultyTableOrig.add(origFaculty))
       .catch((error) => dbError = true)//TODO find way to deal with such error
 
-    fetch(config.apiUrl + '/admin/faculties', {
-    	method: 'POST',
+    fetch(config.apiUrl + '/faculties', {
+    	method: 'PUT',
       body: JSON.stringify(faculty),
     	mode: 'cors',
-    	redirect: 'follow',
     	headers: new Headers({
-    		'Authorization': 'Bearer ' + getState().idToken
+    		'Authorization':  'Bearer ' + window.keycloak.token,
+        'Content-Type' :  'application/json'
       	})
       }).then(response => {
-
-      }).catch(function(err) {
-      	// Error :(
-      });
+        if(response.status == 200){
+          dispatch(facultySaved(faculty))
+          db.facultyTable.update(faculty.id, { status : SUCCESS})
+        }
+        else {
+           dispatch(facultyFailed(faculty))
+           db.facultyTable.update(faculty.id, { status : FAILURE})
+        }
+      }
+      ).catch(error => {
+        dispatch(facultyFailed(faculty))
+        db.facultyTable.update(faculty.id, { status : FAILURE})
+      })
   }
 }
 

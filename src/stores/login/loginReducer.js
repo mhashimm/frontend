@@ -6,7 +6,7 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
     case BEGIN_LOGIN:
       return Object.assign({}, state, {authenticated: false, pending: true})
     case LOGIN_SUCCESS:
-      return Object.assign({}, state, parseToken(action.token), { authenticated: true, pending: false})
+      return Object.assign({}, state, parseToken(), { authenticated: true, pending: false})
     case LOGIN_FAILURE:
       return Object.assign({}, state, {authenticated: false, pending: false})
     default:
@@ -14,13 +14,13 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
   }
 }
 
-function parseToken(token){
-  if(config.appEnv === 'dist')
+function parseToken(){
+  //TODO this is not the way to go
+  if(config.appEnv === 'dist' || config.appEnv === 'dev')
     return {
-      username: token.preferred_username,
-      departments: token.departments.slice(),
-      groups: token.groups.slice(),
-      claims: token.claims.slice()
+      username: global.keycloak.tokenParsed.username,
+      departments: global.keycloak.tokenParsed.departments.slice(),
+      groups: global.keycloak.tokenParsed.groups.slice()
     }
   else
     return{

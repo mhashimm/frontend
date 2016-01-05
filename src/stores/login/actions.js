@@ -1,7 +1,6 @@
 import config from 'config'
 const keycloakObject = require('keycloak')
 
-
 export const BEGIN_LOGIN = 'BEGIN_LOGIN'
 export function beginLogin(){
   return {
@@ -10,10 +9,9 @@ export function beginLogin(){
 }
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
-export function loginSuccess(token){
+export function loginSuccess(){
   return {
-    type: LOGIN_SUCCESS,
-    token
+    type: LOGIN_SUCCESS
   }
 }
 
@@ -33,17 +31,26 @@ export function logout(){
 }
 
 export function login(){
-  return function(dispatch){
+  return function(dispatch, getState){
     dispatch(beginLogin())
-    if(config.appEnv === 'dist'){
-      const keycloak = new  keycloakObject(config.keycloak)
-      return keycloak.init({ onLoad: 'login-required' })
+    //if(config.appEnv === 'dist'){
+      let keycloak = new  keycloakObject(config.keycloak)
+      keycloak.init({
+        onLoad: 'login-required',
+        checkLoginIframe: false
+      })
         .success(authenticated => authenticated
-          ? dispatch(loginSuccess(keycloak.idTokenParsed))
-          : dispatch(loginFailure()))
-        .error(
-          error => dispatch(loginFailure(error)))
-    }
-    else dispatch(loginSuccess())
+          ? dispatch(loginSuccess()) : dispatch(loginFailure())
+        )
+        .error(error => dispatch(loginFailure(error)))
+
+      keycloak.onTokenExpired = () => keycloak.updateToken()
+        .success(refreshed => refreshed ? dispatch(loginSuccess()) : dispatch(loginFailure()))
+        .error(error => dispatch(loginFailure(error)))
+
+
+      global.keycloak = keycloak
+    //}
+    //else dispatch(loginSuccess())
   }
 }
