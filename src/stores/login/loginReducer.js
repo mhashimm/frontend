@@ -24,7 +24,7 @@ function parseToken(){
     }
   else
     return{
-      username: 'محمد',
+      username: 'mhashim',
       departments: ['math', 'bio'],
       groups: ['admin', 'dean', 'professor', 'report', 'admitter']
     }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 
@@ -7,7 +7,7 @@ import * as actionCreators from '../stores/login/actions'
 
 require('../styles/style.css')
 
-class App extends React.Component {
+class App extends Component {
   constructor(props){
     super(props)
     props.actions.login()
@@ -23,6 +23,6 @@ class App extends React.Component {
 }
 
 module.exports = connect(
-  state => ({auth: state.auth}),
-  dispatch => ({actions: bindActionCreators(actionCreators, dispatch)})
+  state => ({ auth: state.auth }),
+  dispatch => ({ actions: bindActionCreators(actionCreators, dispatch) })
 )(App)

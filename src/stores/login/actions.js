@@ -1,5 +1,5 @@
 import config from 'config'
-const keycloakObject = require('keycloak')
+const keycloakConf = require('keycloak')
 
 export const BEGIN_LOGIN = 'BEGIN_LOGIN'
 export function beginLogin(){
@@ -34,7 +34,7 @@ export function login(){
   return function(dispatch, getState){
     dispatch(beginLogin())
     //if(config.appEnv === 'dist'){
-      let keycloak = new  keycloakObject(config.keycloak)
+      let keycloak = new  keycloakConf(config.keycloak)
       keycloak.init({
         onLoad: 'login-required',
         checkLoginIframe: false
