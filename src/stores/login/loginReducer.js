@@ -16,7 +16,7 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
 
 function parseToken(){
   //TODO this is not the way to go
-  if(config.appEnv === 'dist' || config.appEnv === 'dev')
+  if(config.appEnv === 'dist')// || config.appEnv === 'dev')
     return {
       username: global.keycloak.tokenParsed.username,
       departments: global.keycloak.tokenParsed.departments.slice(),

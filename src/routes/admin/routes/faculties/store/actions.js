@@ -1,6 +1,6 @@
 
 //import Rx from '@reactivex/rxjs'
-import Dexie from 'Dexie'
+import Dexie from 'dexie'
 import config from 'config'
 
 import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
@@ -8,6 +8,7 @@ export const FACULTY_CREATED = 'FACULTY_CREATED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_SAVED = 'FACULTY_SAVED'
 export const FACULTY_FAILED = 'FACULTY_FAILED'
+export const FACULTY_CANCELED = 'FACULTY_CANCELED'
 
 export function facultyCreated(faculty){
   return {
@@ -38,41 +39,70 @@ export function facultyFailed(faculty, error){
   }
 }
 
-export function createFaculty(faculty){
+export function facultyCanceled(id, faculty){
+  return{
+    type: FACULTY_CANCELED,
+    id,
+    faculty
+  }
+}
+
+// export function createFaculty(faculty){
+//   return function(dispatch, getState){
+//     dispatch(facultyCreated(faculty))
+//   }
+// }
+
+export function cancelFaculty(id){
   return function(dispatch, getState){
-    dispatch(facultyCreated(faculty))
+    let dbError = false
+    var db = CreateDb(undefined, getState().user.username)
+    db.facultyTableOrig.get(id).
+      then(_faculty => {
+        if(_faculty !== undefined){
+          db.facultyTableOrig.delete(id)
+          db.facultyTable.update(id, _faculty)
+          dispatch(facultyCanceled(id, _faculty))
+        }
+        else {
+          db.facultyTable.delete(id)
+          dispatch(facultyCanceled(id, _faculty))
+        }
+      })
   }
 }
 
 export function createFaculty(faculty){
   return function(dispatch, getState){
+    const _faculty = Object.assign({}, faculty, { isActive: true, status: PENDING })
     let dbError = false
-    dispatch(facultyCreated(faculty))
-    var db = CreateDb()
-    db.facultyTable.add(Object.assign({}, faculty, { status: PENDING }))
+    dispatch(facultyCreated(_faculty))
+    var db = CreateDb(undefined, getState().user.username)
+    db.facultyTable.add()
     .catch( error => dbError = true)
 
-    fetch(config.apiUrl + '/faculties',{
+    global.fetch(config.apiUrl + '/faculties',{
       method: 'POST',
-      body: JSON.stringify(faculty),
+      body: JSON.stringify(_faculty),
       mode: 'cors',
       headers: new Headers({
-        'Authorization':  'Bearer ' + window.keycloak.token,
-        'Content-Type' :  'application/json'
+        'Authorization':  'Bearer ' + global.keycloak.token,
+        'Content-Type' :  'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:8080'
       })
     }).then(response => {
       if(response.status == 201){
-        dispatch(facultySaved(faculty))
-        db.facultyTable.update(faculty.id, { status : SUCCESS})
+        dispatch(facultySaved(_faculty))
+        db.facultyTable.update(_faculty.id, { status : SUCCESS})
       }
       else {
-         dispatch(facultyFailed(faculty))
-         db.facultyTable.update(faculty.id, { status : FAILURE})
+         dispatch(facultyFailed(_faculty))
+         db.facultyTable.update(_faculty.id, { status : FAILURE})
       }
     }
     ).catch(error => {
-      dispatch(facultyFailed(faculty))
-      db.facultyTable.update(faculty.id, { status : FAILURE})
+      dispatch(facultyFailed(_faculty))
+      db.facultyTable.update(_faculty.id, { status : FAILURE})
     })
   }
 }
@@ -82,7 +112,7 @@ export function updateFaculty(faculty){
     let dbError = false
     const origFaculty = getState().faculties.find(f => f.id === faculty.id)
     dispatch(facultyUpdated(faculty))
-    var db = CreateDb()
+    var db = CreateDb(undefined, getState().user.username)
     db.facultyTable.add(faculty)
       .then(() => db.facultyTableOrig.add(origFaculty))
       .catch((error) => dbError = true)//TODO find way to deal with such error
@@ -92,8 +122,9 @@ export function updateFaculty(faculty){
       body: JSON.stringify(faculty),
     	mode: 'cors',
     	headers: new Headers({
-    		'Authorization':  'Bearer ' + window.keycloak.token,
-        'Content-Type' :  'application/json'
+    		'Authorization':  'Bearer ' + global.keycloak.token,
+        'Content-Type' :  'application/json',
+        'Access-Control-Allow-Origin': 'http://localhost:8080'
       	})
       }).then(response => {
         if(response.status == 200){
@@ -112,9 +143,11 @@ export function updateFaculty(faculty){
   }
 }
 
-function CreateDb(version = config.db.version){
-  var db = new Dexie(config.db.name)
-  db.version(version).stores({
+function CreateDb(version, username){
+  const _version = version === undefined || version === null ?
+    config.db.version : version
+  var db = new Dexie(username +'-'+ config.db.name)
+  db.version(_version).stores({
     facultyTable: config.db.facultyTable,
     facultyTableOrig: config.db.facultyTableOrig
   });

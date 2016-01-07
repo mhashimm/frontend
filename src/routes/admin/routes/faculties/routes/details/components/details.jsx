@@ -1,7 +1,7 @@
 import React, { PropTypes } from 'react'
 import { connect } from 'react-redux';
 import { Link } from 'react-router'
-import { TextBool } from '~/components/Elements'
+import { TextBool, DetailsButton } from '~/components/Elements'
 
 class Details extends React.Component {
   render(){
@@ -9,10 +9,8 @@ class Details extends React.Component {
     return(
       <div>
         <h3>معلومات الكلية</h3>
-        <Link className="btn btn-primary pull-left" to={`/admin/faculties/update/${faculty.id}`}>
-        <i className="fa fa-pencil-square-o" style={{paddingLeft:5}}></i>
-        تعديل
-        </Link>
+        <DetailsButton kls="pull-left" text="تعديل"
+          url={`/admin/faculties/update/${faculty.id}`}/>
         <br/>
         <br/>
         <FacultyDetails {...faculty}/>

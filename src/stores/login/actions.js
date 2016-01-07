@@ -33,7 +33,7 @@ export function logout(){
 export function login(){
   return function(dispatch, getState){
     dispatch(beginLogin())
-    //if(config.appEnv === 'dist'){
+    if(config.appEnv === 'dist'){
       let keycloak = new  keycloakConf(config.keycloak)
       keycloak.init({
         onLoad: 'login-required',
@@ -50,7 +50,7 @@ export function login(){
 
 
       global.keycloak = keycloak
-    //}
-    //else dispatch(loginSuccess())
+    }
+    else dispatch(loginSuccess())
   }
 }

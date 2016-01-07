@@ -7,6 +7,7 @@ import { createFaculty } from '../../../store/actions';
 import { createValidator } from '~/utils/validate';
 import facultyValidator from '../../../validation';
 import InputElement from '~/components/inputElement'
+import * as elements from '~/components/Elements'
 
 class Create extends Component {
   render(){
@@ -51,8 +52,8 @@ class CreateFacultyForm extends React.Component {
           <InputElement field={titleTr} placeholder="أدخل إسم الكلية بالإنجليزية" label="الإسم بالإنجليزية"/>
           <div className="form-group">
             <div className="col-md-12 col-md-offset-2">
-              <button className="btn" disabled={submitting} onClick={resetForm}>إسترجاع</button>
-              <button style={{marginRight: 10}} className="btn btn-primary" disabled={submitting} onClick={handleSubmit}>حفظ</button>
+              <elements.ResetButton disabled={submitting} onClick={resetForm} text="إسترجاع"/>
+              <elements.SubmitButton disabled={submitting} onClick={handleSubmit} text="حفظ" style={{marginRight: 10}}/>
             </div>
           </div>
         </form>

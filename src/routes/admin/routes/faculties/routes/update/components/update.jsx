@@ -2,6 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
 import { pushPath } from 'redux-simple-router';
+import * as elements from '~/components/Elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css');
 var Switch = require('react-bootstrap-switch');
@@ -61,8 +62,8 @@ class UpdateFacultyForm extends Component {
         <br/>
           <div className="form-group">
             <div className="col-md-12 col-md-offset-2">
-              <button disabled={submitting} onClick={resetForm} className="btn">إسترجاع</button>
-              <button disabled={submitting} onClick={handleSubmit} style={{marginRight: 10}} className="btn btn-primary">حفظ</button>
+            <elements.ResetButton disabled={submitting} onClick={resetForm} text="إسترجاع"/>
+            <elements.SubmitButton disabled={submitting} onClick={handleSubmit} text="حفظ" style={{marginRight: 10}}/>
             </div>
           </div>
         </form>

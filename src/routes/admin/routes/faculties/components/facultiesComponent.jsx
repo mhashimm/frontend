@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import {Link} from 'react-router'
 import { connect } from 'react-redux'
-import { IconBool } from '~/components/Elements'
+import * as elements from '~/components/Elements'
 import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
+import { cancelFaculty } from '../store/actions'
 
 const styles = {
 
@@ -10,7 +11,6 @@ const styles = {
 
 class FacultiesComponent extends Component {
   render(){
-    window.console.log(this.props)
     const {faculties} = this.props
     return (
       <div>
@@ -18,17 +18,17 @@ class FacultiesComponent extends Component {
         (
           <div>
             <h3>قائمة الكليات</h3>
-            <Link className="btn btn-primary pull-left" to={`/admin/faculties/create`}>
-              <i className="fa fa-plus" style={{paddingLeft:5}}></i>
-              إضافة
-
-            </Link>
+            <elements.CreateButton text="إضافة" kls="pull-left" url={`/admin/faculties/create`}/>
             <br/><br/>
-            <FacultyTable faculties={faculties}/>
+            <FacultyTable faculties={faculties} handleCancel={ e => this.handleCancel(e)}/>
           </div>
         )}
       </div>
     );
+  }
+
+  handleCancel(id){
+    this.props.dispatch(cancelFaculty(id))
   }
 }
 
@@ -46,7 +46,7 @@ var FacultyTable = (props) =>
       </thead>
       <tbody>
         {props.faculties.map((faculty) =>
-          <FacultyRow {...faculty} key={faculty.id} />
+          <FacultyRow {...faculty} key={faculty.id} handleCancel={props.handleCancel} />
         )}
       </tbody>
     </table>
@@ -58,15 +58,14 @@ var FacultyRow = (props) =>
     <td>{props.title}</td>
     <td>{props.titleTr}</td>
     <td>
-      <IconBool value={props.isActive}/>
+      <elements.TextBool value={props.isActive}/>
     </td>
     <td>
-      <Link to={`/admin/faculties/update/${props.id}`} style={styles}>
-        <i className="fa fa-pencil-square-o fa-2x"></i>
-      </Link>
-      <Link to={`/admin/faculties/details/${props.id}`} style={Object.assign(styles, { paddingRight: 10})}>
-        <i className="fa fa-eye fa-2x"></i>
-      </Link>
+      <elements.UpdateLink url={`/admin/faculties/update/${props.id}`}/>
+      <elements.DetailsLink url={`/admin/faculties/details/${props.id}`} style={{paddingRight: 10}}/>
+      {props.status === PENDING || props.status === FAILURE ?
+        <elements.CancelLink handleCancel={props.handleCancel} id={props.id}/>
+      : null }
     </td>
   </tr>;
 

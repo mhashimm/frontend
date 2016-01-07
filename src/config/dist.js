@@ -5,7 +5,7 @@ import baseConfig from './base';
 
 let config = {
   appEnv: 'dist',
-  apiUrl: 'http://localhost:9000/api',
+  apiUrl: 'http://localhost:8888/api',
   keycloak: {
     url: 'http://localhost:8080/auth',
     realm: 'sisdn-realm',
