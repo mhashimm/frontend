@@ -3,13 +3,17 @@ import {Link} from 'react-router'
 import { connect } from 'react-redux'
 import * as elements from '~/components/Elements'
 import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
-import { cancelFaculty } from '../store/actions'
+import { cancelFaculty, loadFaculties } from '../store/actions'
 
 const styles = {
 
 }
 
 class FacultiesComponent extends Component {
+  componentDidMount(){
+    this.props.dispatch(loadFaculties())
+  }
+
   render(){
     const {faculties} = this.props
     return (

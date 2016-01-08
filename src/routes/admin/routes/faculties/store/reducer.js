@@ -1,17 +1,15 @@
 import { FACULTY_CREATED, FACULTY_UPDATED, FACULTY_SAVED ,
-   FACULTY_FAILED, FACULTY_CANCELED} from './actions'
+   FACULTY_FAILED, FACULTY_CANCELED, FACULTIES_LOADED} from './actions'
 import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
 
-var facs = [
-  {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'isActive': true, status: EXISTING},
-  {'id': 'law', 'title': 'كلية القانون', 'titleTr': 'Law School', 'isActive': false, status: EXISTING},
-  {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'isActive': true, status: EXISTING}
-]
 
-export function reducer(state = facs, action){
+
+export function reducer(state = [], action){
   var index;
 
   switch (action.type) {
+    case FACULTIES_LOADED:
+      return action.faculties
     case FACULTY_CANCELED:
     index = state.findIndex(f => f.id === action.id)
       return action.faculty !== undefined

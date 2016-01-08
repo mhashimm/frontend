@@ -4,11 +4,45 @@ import Dexie from 'dexie'
 import config from 'config'
 
 import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
+
 export const FACULTY_CREATED = 'FACULTY_CREATED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_SAVED = 'FACULTY_SAVED'
 export const FACULTY_FAILED = 'FACULTY_FAILED'
 export const FACULTY_CANCELED = 'FACULTY_CANCELED'
+export const FACULTIES_LOADED = 'FACULTIES_LOADED'
+
+export function loadFaculties(){
+  return function(dispatch, getState){
+    let db = CreateDb(undefined, getState().user.username)
+    db.facultyTable.toArray(function(_faculties) {
+       dispatch(facultiesLoaded(_faculties))
+     })
+    const facs = [
+      {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'isActive': true},
+      {'id': 'law', 'title': 'كلية القانون', 'titleTr': 'Law School', 'isActive': false},
+      {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'isActive': true}
+    ]
+
+    //setTimeout(() => dispatch(facultiesLoaded(facs)), 2000)
+
+    facs.map(fac => {
+      db.facultyTable.get(fac.id).then(function(f) {
+        if(f === undefined) db.facultyTable.add(fac)
+        else {
+          db.facultyTableOrig.add(f).then(() => db.facultyTable.add(fac)) //TODO maybe replace the whole object
+        }
+      })
+    })
+  }
+}
+
+export function facultiesLoaded(faculties){
+  return {
+    type: FACULTIES_LOADED,
+    faculties
+  }
+}
 
 export function facultyCreated(faculty){
   return {
@@ -56,7 +90,7 @@ export function facultyCanceled(id, faculty){
 export function cancelFaculty(id){
   return function(dispatch, getState){
     let dbError = false
-    var db = CreateDb(undefined, getState().user.username)
+    let db = CreateDb(undefined, getState().user.username)
     db.facultyTableOrig.get(id).
       then(_faculty => {
         if(_faculty !== undefined){
@@ -77,7 +111,7 @@ export function createFaculty(faculty){
     const _faculty = Object.assign({}, faculty, { isActive: true, status: PENDING })
     let dbError = false
     dispatch(facultyCreated(_faculty))
-    var db = CreateDb(undefined, getState().user.username)
+    let db = CreateDb(undefined, getState().user.username)
     db.facultyTable.add()
     .catch( error => dbError = true)
 
@@ -112,7 +146,7 @@ export function updateFaculty(faculty){
     let dbError = false
     const origFaculty = getState().faculties.find(f => f.id === faculty.id)
     dispatch(facultyUpdated(faculty))
-    var db = CreateDb(undefined, getState().user.username)
+    let db = CreateDb(undefined, getState().user.username)
     db.facultyTable.add(faculty)
       .then(() => db.facultyTableOrig.add(origFaculty))
       .catch((error) => dbError = true)//TODO find way to deal with such error
