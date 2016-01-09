@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
 import { pushPath } from 'redux-simple-router';
 
-import { createFaculty, createDb } from '../../../store/actions';
+import { createFaculty } from '../../../store/actions';
 import { createValidator, validateId } from '~/utils/validate';
 import facultyValidator from '../../../validation';
 import InputElement from '~/components/inputElement'

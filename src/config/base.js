@@ -6,7 +6,7 @@ export default {
   db: {
     name: 'sisdndb',
     version: 1,
-    facultyTable: facultySchema,
-    facultyTableOrig: facultySchema
+    faculty: {name: 'faculties', schema: facultySchema, url: '/faculties'},
+    facultyOrig: {name: 'facultiesOrig', schema: facultySchema, url: '/faculties'}
   }
 }
