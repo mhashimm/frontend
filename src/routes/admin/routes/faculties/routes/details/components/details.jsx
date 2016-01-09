@@ -1,7 +1,6 @@
 import React, { PropTypes } from 'react'
-import { connect } from 'react-redux';
-import { Link } from 'react-router'
-import { TextBool, DetailsButton } from '~/components/Elements'
+import { connect } from 'react-redux'
+import { TextBool, DetailsButton } from '~/components/elements'
 
 class Details extends React.Component {
   render(){

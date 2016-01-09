@@ -8,9 +8,9 @@ const styles = {
 
 export const IconBool = (props) => {
   if(props.value)
-    return (<i className="fa fa-check fa-2x" style={styles}></i>);
+    return (<i className='fa fa-check fa-2x' style={styles}></i>);
   else
-    return (<i className="fa fa-times fa-2x" style={styles}></i>)
+    return (<i className='fa fa-times fa-2x' style={styles}></i>)
 }
 
 export const TextBool = (props) => {
@@ -22,35 +22,35 @@ export const TextBool = (props) => {
 
 export const UpdateLink = (props) =>
   <Link to={props.url} style={props.style}>
-    <i className="fa fa-pencil-square-o fa-2x"></i>
+    <i className='fa fa-pencil-square-o fa-2x'></i>
   </Link>
 
 export const CancelLink = (props) =>
   <a onClick={(e) => { e.preventDefault(); props.handleCancel(props.id)}}
     style={props.style} href='cancel'>
-    <i className="fa fa-times fa-2x"></i>
+    <i className='fa fa-times fa-2x'></i>
   </a>
 
 export const DetailsLink = (props) =>
   <Link to={props.url} style={props.style}>
-    <i className="fa fa-eye fa-2x"></i>
+    <i className='fa fa-eye fa-2x'></i>
   </Link>
 
 export const CreateButton = (props) =>
-  <Link className={"btn btn-primary" +" "+ props.kls} to={props.url}>
-    <i className="fa fa-plus" style={{paddingLeft:5}}></i>
+  <Link className={'btn btn-primary' +' '+ props.kls} to={props.url}>
+    <i className='fa fa-plus' style={{paddingLeft:5}}></i>
     {props.text}
   </Link>
 
 export const DetailsButton = (props) =>
-  <Link className={"btn btn-primary" +" "+ props.kls} to={props.url}
+  <Link className={'btn btn-primary' +' '+ props.kls} to={props.url}
     style={props.style}>
-    <i className="fa fa-pencil-square-o" style={{paddingLeft:5}}></i>
+    <i className='fa fa-pencil-square-o' style={{paddingLeft:5}}></i>
     {props.text}
   </Link>
 
 export const ResetButton = (props) =>
-  <button className="btn" disabled={props.disabled}
+  <button className='btn' disabled={props.disabled}
     onClick={props.onClick}>{props.text}
   </button>
 

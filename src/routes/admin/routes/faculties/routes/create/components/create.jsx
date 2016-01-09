@@ -3,11 +3,11 @@ import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
 import { pushPath } from 'redux-simple-router';
 
-import { createFaculty } from '../../../store/actions';
-import { createValidator } from '~/utils/validate';
+import { createFaculty, createDb } from '../../../store/actions';
+import { createValidator, validateId } from '~/utils/validate';
 import facultyValidator from '../../../validation';
 import InputElement from '~/components/inputElement'
-import * as elements from '~/components/Elements'
+import * as elements from '~/components/elements'
 
 class Create extends Component {
   render(){
@@ -15,7 +15,7 @@ class Create extends Component {
       <div>
         <h3>إضافة كلية</h3>
         <br/>
-        <ReduxForm onSubmit={(e) => this.handleSubmit(e)} />
+        <ReduxForm ids={this.props.faculties.map(f => f.id)} onSubmit={(e) => this.handleSubmit(e)} />
       </div>
     )
   }
@@ -65,6 +65,8 @@ class CreateFacultyForm extends React.Component {
 let ReduxForm = reduxForm({
   form: 'createFaculty',
   fields: ['id', 'title', 'titleTr'],
+  asyncValidate: validateId,
+  asyncBlurFields: ['id'],
   validate: createValidator(facultyValidator)
   },
   () => ({
@@ -72,4 +74,5 @@ let ReduxForm = reduxForm({
   })
 )(CreateFacultyForm);
 
-module.exports = connect((state) => ({faculties: state.faculties}))(Create)
+module.exports = connect((state) =>
+  ({faculties: state.faculties, user: state.user}))(Create)

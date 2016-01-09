@@ -2,7 +2,7 @@ import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
 import { pushPath } from 'redux-simple-router';
-import * as elements from '~/components/Elements'
+import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css');
 var Switch = require('react-bootstrap-switch');

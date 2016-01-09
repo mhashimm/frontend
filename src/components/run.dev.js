@@ -3,7 +3,7 @@ import { render } from 'react-dom'
 import { createHistory, useBasename } from 'history'
 import { Router } from 'react-router'
 import { Provider } from 'react-redux'
-import DevTools from './devTools'
+//import DevTools from './devTools'
 import { syncReduxAndRouter} from 'redux-simple-router'
 
 import configureStore from '~/stores/configureStore'
@@ -16,7 +16,7 @@ syncReduxAndRouter(history, store)
 render(
   <Provider store={store}>
     <div>
-      <DevTools/>
+      {/*<DevTools/>*/}
       <Router history={history} routes={RootRoute} />
     </div>
   </Provider>,

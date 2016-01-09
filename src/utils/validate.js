@@ -81,3 +81,10 @@ export function createValidator(rules) {
     return errors;
   };
 }
+
+export function validateId(values, dispatch, props) {
+  return new Promise((resolve, reject) => {
+    if(props.ids.indexOf(values.id) >= 0) reject({id: 'الإختصار غير متاح'})
+    else resolve()
+  })
+}

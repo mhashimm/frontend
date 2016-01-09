@@ -30,27 +30,46 @@ export function logout(){
   }
 }
 
+export const TOKEN_SUCCESS = 'TOKEN_SUCCESS'
+export function tokenRefreshed(token){
+  return {
+    type: TOKEN_SUCCESS,
+    token
+  }
+}
+
+export const TOKEN_FAILURE = 'TOKEN_FAILURE'
+export function tokenFailed(error){
+  return {
+    type: TOKEN_FAILURE,
+    error
+  }
+}
+
 export function login(){
-  return function(dispatch, getState){
+  return function(dispatch){
     dispatch(beginLogin())
+    var keycloak = new  keycloakConf(config.keycloak)
     if(config.appEnv === 'dist'){
-      let keycloak = new  keycloakConf(config.keycloak)
       keycloak.init({
         onLoad: 'login-required',
         checkLoginIframe: false
-      })
-        .success(authenticated => authenticated
-          ? dispatch(loginSuccess()) : dispatch(loginFailure())
-        )
-        .error(error => dispatch(loginFailure(error)))
+      }).success(authenticated => {
+          if(!authenticated)
+            dispatch(loginFailure())
+          else {
+            global.keycloak = keycloak
+            dispatch(loginSuccess())
+          }
+        }).error(error => dispatch(loginFailure(error)))
 
       keycloak.onTokenExpired = () => keycloak.updateToken()
-        .success(refreshed => refreshed ? dispatch(loginSuccess()) : dispatch(loginFailure()))
+        .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
         .error(error => dispatch(loginFailure(error)))
 
 
-      global.keycloak = keycloak
+
     }
-    else dispatch(loginSuccess())
+   else dispatch(loginSuccess())
   }
 }

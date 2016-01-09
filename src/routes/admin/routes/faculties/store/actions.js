@@ -3,19 +3,18 @@
 import Dexie from 'dexie'
 import config from 'config'
 
-import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
 
-export const FACULTY_CREATED = 'FACULTY_CREATED'
+import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
+
+export const FACULTY_ADDED = 'FACULTY_ADDED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
-export const FACULTY_SAVED = 'FACULTY_SAVED'
-export const FACULTY_FAILED = 'FACULTY_FAILED'
 export const FACULTY_CANCELED = 'FACULTY_CANCELED'
 export const FACULTIES_LOADED = 'FACULTIES_LOADED'
 
 export function loadFaculties(){
   return function(dispatch, getState){
-    let db = CreateDb(undefined, getState().user.username)
-    db.facultyTable.toArray(function(_faculties) {
+    let db = createDb(undefined, getState().user.username)
+    db['facultyTable'].toArray(function(_faculties) {
        dispatch(facultiesLoaded(_faculties))
      })
     const facs = [
@@ -26,16 +25,18 @@ export function loadFaculties(){
 
     //setTimeout(() => dispatch(facultiesLoaded(facs)), 2000)
 
-    facs.map(fac => {
-      db.facultyTable.get(fac.id).then(function(f) {
-        if(f === undefined) db.facultyTable.add(fac)
-        else {
-          db.facultyTableOrig.add(f).then(() => db.facultyTable.add(fac)) //TODO maybe replace the whole object
-        }
-      })
-    })
+    // facs.map(fac => {
+    //   db.facultyTable.get(fac.id).then(function(f) {
+    //     if(f)
+    //       db.facultyTable.add(fac)
+    //     else
+    //       //TODO maybe replace the whole object
+    //       db.facultyTableOrig.add(f).then(() => db.facultyTable.add(fac))
+    //   })
+    // })
   }
 }
+
 
 export function facultiesLoaded(faculties){
   return {
@@ -44,9 +45,9 @@ export function facultiesLoaded(faculties){
   }
 }
 
-export function facultyCreated(faculty){
+export function facultyAdded(faculty){
   return {
-    type: FACULTY_CREATED,
+    type: FACULTY_ADDED,
     faculty
   }
 }
@@ -81,22 +82,18 @@ export function facultyCanceled(id, faculty){
   }
 }
 
-// export function createFaculty(faculty){
-//   return function(dispatch, getState){
-//     dispatch(facultyCreated(faculty))
-//   }
-// }
-
 export function cancelFaculty(id){
   return function(dispatch, getState){
     let dbError = false
-    let db = CreateDb(undefined, getState().user.username)
+    let db = createDb(undefined, getState().user.username)
     db.facultyTableOrig.get(id).
       then(_faculty => {
-        if(_faculty !== undefined){
-          db.facultyTableOrig.delete(id)
-          db.facultyTable.update(id, _faculty)
-          dispatch(facultyCanceled(id, _faculty))
+        if(_faculty){
+          if(db.facultyTable.get(id)){
+            db.facultyTableOrig.delete(id)
+            db.facultyTable.put(id, _faculty)
+            dispatch(facultyCanceled(id, _faculty))
+          }
         }
         else {
           db.facultyTable.delete(id)
@@ -110,32 +107,32 @@ export function createFaculty(faculty){
   return function(dispatch, getState){
     const _faculty = Object.assign({}, faculty, { isActive: true, status: PENDING })
     let dbError = false
-    dispatch(facultyCreated(_faculty))
-    let db = CreateDb(undefined, getState().user.username)
-    db.facultyTable.add()
-    .catch( error => dbError = true)
+    dispatch(facultyAdded(_faculty))
+    let db = createDb(undefined, getState().user.username)
+    db.facultyTable.add(_faculty).catch( error => dbError = true)
 
     global.fetch(config.apiUrl + '/faculties',{
       method: 'POST',
       body: JSON.stringify(_faculty),
       mode: 'cors',
       headers: new Headers({
-        'Authorization':  'Bearer ' + global.keycloak.token,
+        'Authorization':  'Bearer ' + getState().user.token,
         'Content-Type' :  'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:8080'
       })
     }).then(response => {
       if(response.status == 201){
-        dispatch(facultySaved(_faculty))
-        db.facultyTable.update(_faculty.id, { status : SUCCESS})
+        delete _faculty.status
+        dispatch(facultyUpdated(Object.assign({}, _faculty, {status: SUCCESS})))
+        db.facultyTable.put(_faculty)
+        setTimeout(() => dispatch(facultyUpdated(_faculty)), 2000)
       }
       else {
-         dispatch(facultyFailed(_faculty))
+         dispatch(facultyUpdated(Object.assign({}, _faculty, {status: FAILURE}), response.statusText))
          db.facultyTable.update(_faculty.id, { status : FAILURE})
       }
     }
     ).catch(error => {
-      dispatch(facultyFailed(_faculty))
+      dispatch(facultyUpdated(Object.assign({}, _faculty, {status: FAILURE})))
       db.facultyTable.update(_faculty.id, { status : FAILURE})
     })
   }
@@ -144,10 +141,11 @@ export function createFaculty(faculty){
 export function updateFaculty(faculty){
   return function(dispatch, getState){
     let dbError = false
-    const origFaculty = getState().faculties.find(f => f.id === faculty.id)
-    dispatch(facultyUpdated(faculty))
-    let db = CreateDb(undefined, getState().user.username)
-    db.facultyTable.add(faculty)
+    let db = createDb(undefined, getState().user.username)
+    const origFaculty = db.facultyTable.get(faculty.id)
+    dispatch(facultyUpdated(Object.assign({}, faculty, {status: PENDING})))
+
+    db.facultyTable.put(Object.assign({}, faculty, {status: PENDING}))
       .then(() => db.facultyTableOrig.add(origFaculty))
       .catch((error) => dbError = true)//TODO find way to deal with such error
 
@@ -156,28 +154,29 @@ export function updateFaculty(faculty){
       body: JSON.stringify(faculty),
     	mode: 'cors',
     	headers: new Headers({
-    		'Authorization':  'Bearer ' + global.keycloak.token,
+    		'Authorization':  'Bearer ' + getState().user.token,
         'Content-Type' :  'application/json',
-        'Access-Control-Allow-Origin': 'http://localhost:8080'
       	})
       }).then(response => {
         if(response.status == 200){
-          dispatch(facultySaved(faculty))
-          db.facultyTable.update(faculty.id, { status : SUCCESS})
+          dispatch(facultyUpdated(Object.assign({}, faculty, {status: SUCCESS})))
+          db.facultyTable.put(faculty)
+          db.facultyTableOrig.delete(origFaculty)
+          setTimeout(() => dispatch(facultyUpdated(faculty)), 2000)
         }
         else {
-           dispatch(facultyFailed(faculty))
+           dispatch(facultyUpdated(Object.assign({}, faculty, {status: FAILURE})))
            db.facultyTable.update(faculty.id, { status : FAILURE})
         }
       }
       ).catch(error => {
-        dispatch(facultyFailed(faculty))
+        dispatch(facultyUpdated(Object.assign({}, faculty, {status: FAILURE})))
         db.facultyTable.update(faculty.id, { status : FAILURE})
       })
   }
 }
 
-function CreateDb(version, username){
+function createDb(version, username){
   const _version = version === undefined || version === null ?
     config.db.version : version
   var db = new Dexie(username +'-'+ config.db.name)

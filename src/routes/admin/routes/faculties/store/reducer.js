@@ -1,17 +1,14 @@
-import { FACULTY_CREATED, FACULTY_UPDATED, FACULTY_SAVED ,
-   FACULTY_FAILED, FACULTY_CANCELED, FACULTIES_LOADED} from './actions'
-import { SUCCESS, FAILURE, PENDING, EXISTING } from '~/stores/status'
-
-
+import * as actType from './actions'
 
 export function reducer(state = [], action){
   var index;
 
   switch (action.type) {
-    case FACULTIES_LOADED:
+    case actType.FACULTIES_LOADED:
       return action.faculties
-    case FACULTY_CANCELED:
-    index = state.findIndex(f => f.id === action.id)
+
+    case actType.FACULTY_CANCELED:
+      index = state.findIndex(f => f.id === action.id)
       return action.faculty !== undefined
       ? [
           ...state.slice(0, index),
@@ -22,32 +19,21 @@ export function reducer(state = [], action){
          ...state.slice(0, index),
          ...state.slice(index + 1)
        ]
-    case FACULTY_CREATED:
+
+    case actType.FACULTY_ADDED:
       return [
-        Object.assign({}, action.faculty, { status: PENDING }),
+        action.faculty,
          ...state
        ]
-    case FACULTY_UPDATED:
+
+    case actType.FACULTY_UPDATED:
       index = state.findIndex(f => f.id === action.faculty.id)
       return [
         ...state.slice(0, index),
-        Object.assign({}, action.faculty, { status: PENDING }),
+        action.faculty,
         ...state.slice(index + 1)
         ]
-    case FACULTY_SAVED:
-      index = state.findIndex(f => f.id === action.faculty.id)
-      return [
-        ...state.slice(0, index),
-        Object.assign({}, action.faculty, { status: SUCCESS }),
-        ...state.slice(index + 1)
-        ]
-    case FACULTY_FAILED:
-      index = state.findIndex(f => f.id === action.faculty.id)
-      return [
-        ...state.slice(0, index),
-        Object.assign({}, action.faculty, { status: FAILURE }),
-        ...state.slice(index + 1)
-        ]
+
     default:
       return state
   }
