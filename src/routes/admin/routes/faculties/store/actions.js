@@ -1,9 +1,9 @@
 
-//import Rx from '@reactivex/rxjs'
-import Dexie from 'dexie'
 import config from 'config'
-
-import { createEntity } from '~/actions/createEntity'
+import createEntity from '~/actions/createEntity'
+import updateEntity from '~/actions/updateEntity'
+import cancelEntity from '~/actions/cancelEntity'
+import createDb from '~/actions/createDb'
 import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
 
 export const FACULTY_ADDED = 'FACULTY_ADDED'
@@ -11,29 +11,56 @@ export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_CANCELED = 'FACULTY_CANCELED'
 export const FACULTIES_LOADED = 'FACULTIES_LOADED'
 
+export function createFaculty(faculty){
+  return function(dispatch, getState){
+    let entity = Object.assign({}, faculty, { isActive: true, status: PENDING, isNew: true })
+    dispatch(facultyAdded(entity))
+    createEntity({
+      version: 1,
+      path: config.faculties.path,
+      entity: entity,
+      username: getState().user.username,
+      table: 'faculties',
+      updateAction: (faculty) => (dispatch) => dispatch(facultyUpdated(faculty))
+    })
+  }
+}
+
+export function updateFaculty(faculty){
+  return function(dispatch, getState){
+    updateEntity({
+      version: 1,
+      path: config.faculties.path,
+      entity: faculty,
+      username: getState().user.username,
+      table: 'faculties',
+      origTable: 'facultiesOrig',
+      updateAction: (faculty) => (dispatch) => dispatch(facultyUpdated(faculty))
+    })
+  }
+}
+
+export function cancelFaculty(id){
+  return function(dispatch, getState){
+    cancelEntity({
+      version: 1,
+      entity: getState().faculties.find(f => f.id === id),
+      username: getState().user.username,
+      table: 'faculties',
+      origTable: 'facultiesOrig',
+      updateAction: (id, faculty) => (dispatch) => dispatch(facultyCanceled(id, faculty))})
+  }
+}
+
 export function loadFaculties(){
   return function(dispatch, getState){
-    // let db = createDb(undefined, getState().user.username)
-    // db['facultyTable'].toArray(function(_faculties) {
-    //    dispatch(facultiesLoaded(_faculties))
-    //  })
-    const facs = [
-      {'id': 'med', 'title': 'كلية الطب', 'titleTr': 'Faculty Of Medicine', 'isActive': true},
-      {'id': 'law', 'title': 'كلية القانون', 'titleTr': 'Law School', 'isActive': false},
-      {'id': 'econ', 'title': 'كلية الاقتصاد', 'titleTr': 'Faculty Of Economics', 'isActive': true}
-    ]
+    let db = createDb(undefined, getState().user.username)
+    db.open()
+    db.faculties.toArray(function(_faculties) {
+       dispatch(facultiesLoaded(_faculties))
+     })
 
-    //setTimeout(() => dispatch(facultiesLoaded(facs)), 2000)
-
-    // facs.map(fac => {
-    //   db.facultyTable.get(fac.id).then(function(f) {
-    //     if(f)
-    //       db.facultyTable.add(fac)
-    //     else
-    //       //TODO maybe replace the whole object
-    //       db.facultyTableOrig.add(f).then(() => db.facultyTable.add(fac))
-    //   })
-    // })
+    db.close()
   }
 }
 
@@ -59,109 +86,10 @@ export function facultyUpdated(faculty){
   }
 }
 
-export function facultySaved(faculty){
-  return{
-    type: FACULTY_SAVED,
-    faculty
-  }
-}
-
-export function facultyFailed(faculty, error){
-  return{
-    type: FACULTY_FAILED,
-    faculty,
-    error
-  }
-}
-
 export function facultyCanceled(id, faculty){
   return{
     type: FACULTY_CANCELED,
-    id,
-    faculty
+    faculty,
+    id
   }
 }
-
-export function updateAction(faculty){
-  return function(dispatch){
-    dispatch(facultyUpdated(faculty))
-  }
-}
-
-// export function cancelFaculty(id){
-//   return function(dispatch, getState){
-//     let dbError = false
-//     let db = createDb(undefined, getState().user.username)
-//     db.facultyTableOrig.get(id).
-//       then(_faculty => {
-//         if(_faculty){
-//           if(db.facultyTable.get(id)){
-//             db.facultyTableOrig.delete(id)
-//             db.facultyTable.put(id, _faculty)
-//             dispatch(facultyCanceled(id, _faculty))
-//           }
-//         }
-//         else {
-//           db.facultyTable.delete(id)
-//           dispatch(facultyCanceled(id, _faculty))
-//         }
-//       })
-//   }
-// }
-
-export function createFaculty(faculty){
-  return function(dispatch, getState){
-    createEntity({entity: faculty, username: getState().user.username,
-      table: config.db.faculty, updateAction: updateAction})
-  }
-}
-
-// export function updateFaculty(faculty){
-//   return function(dispatch, getState){
-//     let dbError = false
-//     let db = createDb(undefined, getState().user.username)
-//     const origFaculty = db.facultyTable.get(faculty.id)
-//     dispatch(facultyUpdated(Object.assign({}, faculty, {status: PENDING})))
-//
-//     db.facultyTable.put(Object.assign({}, faculty, {status: PENDING}))
-//       .then(() => db.facultyTableOrig.add(origFaculty))
-//       .catch((error) => dbError = true)//TODO find way to deal with such error
-//
-//     fetch(config.apiUrl + '/faculties', {
-//     	method: 'PUT',
-//       body: JSON.stringify(faculty),
-//     	mode: 'cors',
-//     	headers: new Headers({
-//     		'Authorization':  'Bearer ' + getState().user.token,
-//         'Content-Type' :  'application/json',
-//       	})
-//       }).then(response => {
-//         if(response.status == 200){
-//           dispatch(facultyUpdated(Object.assign({}, faculty, {status: SUCCESS})))
-//           db.facultyTable.put(faculty)
-//           db.facultyTableOrig.delete(origFaculty)
-//           setTimeout(() => dispatch(facultyUpdated(faculty)), 2000)
-//         }
-//         else {
-//            dispatch(facultyUpdated(Object.assign({}, faculty, {status: FAILURE})))
-//            db.facultyTable.update(faculty.id, { status : FAILURE})
-//         }
-//       }
-//       ).catch(error => {
-//         dispatch(facultyUpdated(Object.assign({}, faculty, {status: FAILURE})))
-//         db.facultyTable.update(faculty.id, { status : FAILURE})
-//       })
-//   }
-// }
-
-// function createDb(version, username){
-//   const _version = version === undefined || version === null ?
-//     config.db.version : version
-//   var db = new Dexie(username +'-'+ config.db.name)
-//   db.version(_version).stores({
-//     facultyTable: config.db.facultyTable,
-//     facultyTableOrig: config.db.facultyTableOrig
-//   });
-//   db.open()
-//   return db
-// }

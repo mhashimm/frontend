@@ -1,4 +1,5 @@
-import { required, minLength, maxLength, englishOnly, noSpace } from '../../../../utils/validate';
+import { required, minLength, maxLength, englishOnly,
+  noSpace } from '../../../../utils/validate';
 
 
 var facultyValidator = {

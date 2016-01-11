@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
-
 import Dashboard from './dashboard'
 import * as actionCreators from '../stores/login/actions'
+import store from '~/stores/configureStore'
 
 require('../styles/style.css')
 

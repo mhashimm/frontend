@@ -9,6 +9,7 @@ import configureStore from '~/stores/configureStore'
 import RootRoute from './RootRoutes'
 
 const store = configureStore()
+global.store = store
 const history = useBasename(createHistory)({ basename: '/' })
 syncReduxAndRouter(history, store)
 

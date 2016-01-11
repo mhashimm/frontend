@@ -24,7 +24,7 @@ class Update extends Component {
   }
 
   handleSubmit(faculty){
-    const {dispatch} = this.props;
+    const {dispatch} = this.props
     dispatch(updateFaculty(faculty))
     dispatch(pushPath('/admin/faculties'))
   }
@@ -41,17 +41,17 @@ class UpdateFacultyForm extends Component {
 
   render(){
     const {
-      fields: {id, isActive, title, titleTr},
+      fields: {id, isActive, title, titleTr, isNew},
       handleSubmit,
       resetForm,
       submitting
     } = this.props;
 
-    //const {} = this.props.values.isActive.value
     return(
       <div>
         <form onSubmit={handleSubmit} className="form-horizontal">
           <input type="hidden" {...id}></input>
+          { this.props.isNew ? <input type="hidden" {...isNew}></input> : null}
           <InputElement field={title} placeholder="أدخل إسم الكلية" label="إسم الكلية"/>
           <InputElement field={titleTr} placeholder="أدخل إسم الكلية بالإنجليزية" label="الإسم بالإنجليزية"/>
           <div className="form-group ">
@@ -74,7 +74,7 @@ class UpdateFacultyForm extends Component {
 
 const ReduxForm = reduxForm({
   form: 'updateFaculty',
-  fields: ['id', 'isActive', 'title', 'titleTr'],
+  fields: ['id', 'isActive', 'title', 'titleTr', 'isNew'],
   validate: createValidator(facultyValidator)
 }
 )(UpdateFacultyForm);

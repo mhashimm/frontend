@@ -66,9 +66,6 @@ export function login(){
       keycloak.onTokenExpired = () => keycloak.updateToken()
         .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
         .error(error => dispatch(loginFailure(error)))
-
-
-
     }
    else dispatch(loginSuccess())
   }

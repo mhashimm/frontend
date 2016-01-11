@@ -27,11 +27,13 @@ function parseToken(){
       departments: global.keycloak.tokenParsed.departments.slice(),
       token: global.keycloak.token
   }
-  else
+  else{
+    global.keycloak = { token: 'TOKEN'}
     return{
       username: 'FAKE_USER',
       departments: ['math', 'bio'],
       token: '',
       groups: ['admin', 'dean', 'professor', 'report', 'admitter']
     }
+  }
 }

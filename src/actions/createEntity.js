@@ -1,49 +1,57 @@
 import Dexie from 'dexie'
 import config from 'config'
+import createDb from './createDb'
+import {dispatch} from './dispatch'
 
 import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
 
-export function createEntity({entity, username, table, updateAction}){
-  const _entity = Object.assign({}, entity, { status: PENDING })
-  window.console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOO')
-  window.console.log(entity)
-  updateAction(_entity)
-  let dbError = false
-  table = getTable(undefined, username, table)
-  table.add(_entity).catch( error => dbError = true)
+function createEntity({version, path, entity, username, table, updateAction}){
+  let _entityTemp = Object.assign({}, entity)
+  delete _entityTemp.status
+  const _entity = Object.freeze(_entityTemp)
 
-  global.fetch(config.apiUrl + table.url, {
+  let dbError = false
+  let db = createDb(version, username)
+  db.open()
+  const current = db[table]
+
+  current.add(Object.assign({}, _entity, { status: PENDING }))
+    .catch( error => window.console.log(error))
+
+  global.fetch(config.apiUrl + path.post, {
     method: 'POST',
     body: JSON.stringify(_entity),
     mode: 'cors',
     headers: new Headers({
-      'Authorization':  'Bearer ' + '',//global.keycloak.token,
+      'Authorization':  'Bearer ' + global.keycloak.token,
       'Content-Type' :  'application/json',
     })
   }).then(response => {
     if(response.status == 201){
-      delete _entity.status
-      updateAction(Object.assign({}, _entity, {status: SUCCESS}))
-      table.put(_entity)
-      setTimeout(() => updateAction(_entity), 2000)
+      const _local = Object.assign({}, _entity)
+      delete _local.isNew
+      db.transaction('rw', current, function() {
+        current.delete(_entity.id)
+        current.add(_local)
+        }).catch(error => {
+          dispatch(updateAction, _entity, FAILURE)
+          console.log(error)
+      })
+      dispatch(updateAction, _local, SUCCESS)
+      setTimeout(() => dispatch(updateAction, _local), 2000)
     }
     else {
-       updateAction(Object.assign({}, _entity, {status: FAILURE}), response.statusText)
-       table.update(_entity.id, { status : FAILURE})
+     dispatch(updateAction, _entity, FAILURE)
+     current.update(_entity.id, { status : FAILURE})
+     console.log('Error while saving entity')
     }
   }
   ).catch(error => {
-    updateAction(Object.assign({}, _entity, {status: FAILURE}))
-    table.update(_entity.id, { status : FAILURE})
+    dispatch(updateAction, _entity, FAILURE)
+    current.update(entity.id, { status : FAILURE})
+    console.log(error)
   })
+  db.close()
 }
 
-function getTable(version, username, table){
-  const _version = version === undefined || version === null ? 1 : version
-  var db = new Dexie('VVVVAAAA')//(username +'-sisdn')
-  db.version(_version).stores({
-    [table.name]: table.schema
-  });
-  db.open()
-  return db[table.name]
-}
+module.exports = createEntity

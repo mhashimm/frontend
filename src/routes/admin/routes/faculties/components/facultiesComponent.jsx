@@ -33,7 +33,7 @@ class FacultiesComponent extends Component {
 
 var FacultyTable = (props) =>
   <div>
-    <table className="table table-striped table-bordered table-hover">
+    <table className="table table-bordered table-hover">
       <thead>
         <tr>
           <th>الإختصار</th>
