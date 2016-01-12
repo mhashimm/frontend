@@ -16,13 +16,17 @@ class FacultiesComponent extends Component {
         {this.props.children ||
         (
           <div>
-            <h3>قائمة الكليات</h3>
+            <span className="h3">
+              <i className="fa fa-bank"></i>
+              <span style={{marginRight:5}}>قائمة الكليات</span>
+            </span>
             <elements.CreateButton text="إضافة" kls="pull-left" url={`/admin/faculties/create`}/>
             <br/><br/>
             <FacultyTable faculties={faculties} handleCancel={ e => this.handleCancel(e)}/>
           </div>
-        )}
-      </div>
+        )
+      }
+    </div>
     );
   }
 
@@ -40,7 +44,7 @@ var FacultyTable = (props) =>
           <th>إسم الكلية</th>
           <th>الإسم بالإنجليزية</th>
           <th>نشطة</th>
-          <th></th>
+          <th className="col-md-2"></th>
         </tr>
       </thead>
       <tbody>
@@ -60,11 +64,14 @@ var FacultyRow = (props) =>
       <elements.TextBool value={props.isActive}/>
     </td>
     <td>
-      <elements.UpdateLink url={`/admin/faculties/update/${props.id}`}/>
-      <elements.DetailsLink url={`/admin/faculties/details/${props.id}`} style={{paddingRight: 10}}/>
-      {props.status === PENDING || props.status === FAILURE ?
-        <elements.CancelLink handleCancel={props.handleCancel} id={props.id}/>
+      <elements.UpdateLink url={`/admin/faculties/update/${props.id}`}
+        disabled={props.status === PENDING}/>
+      <elements.DetailsLink url={`/admin/faculties/details/${props.id}`}
+        style={{marginRight: 10}} disabled={props.status === PENDING}/>
+      { props.status === FAILURE ?
+        <elements.CancelLink handleCancel={props.handleCancel} id={props.id} style={{marginRight: 10}}/>
       : null }
+      { props.status === PENDING ? <elements.SpinCog style={{marginRight: 10}}/> : null }
     </td>
   </tr>;
 
