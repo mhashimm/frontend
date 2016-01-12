@@ -1,4 +1,3 @@
-import Dexie from 'dexie'
 import config from 'config'
 import createDb from './createDb'
 import {dispatch} from './dispatch'
@@ -10,7 +9,6 @@ function createEntity({version, path, entity, username, table, updateAction}){
   delete _entityTemp.status
   const _entity = Object.freeze(_entityTemp)
 
-  let dbError = false
   let db = createDb(version, username)
   db.open()
   const current = db[table]
@@ -24,7 +22,7 @@ function createEntity({version, path, entity, username, table, updateAction}){
     mode: 'cors',
     headers: new Headers({
       'Authorization':  'Bearer ' + global.keycloak.token,
-      'Content-Type' :  'application/json',
+      'Content-Type' :  'application/json'
     })
   }).then(response => {
     if(response.status == 201){
@@ -35,7 +33,7 @@ function createEntity({version, path, entity, username, table, updateAction}){
         current.add(_local)
         }).catch(error => {
           dispatch(updateAction, _entity, FAILURE)
-          console.log(error)
+          //console.log(error)
       })
       dispatch(updateAction, _local, SUCCESS)
       setTimeout(() => dispatch(updateAction, _local), 2000)
@@ -43,13 +41,13 @@ function createEntity({version, path, entity, username, table, updateAction}){
     else {
      dispatch(updateAction, _entity, FAILURE)
      current.update(_entity.id, { status : FAILURE})
-     console.log('Error while saving entity')
+     //console.log('Error while saving entity')
     }
   }
   ).catch(error => {
     dispatch(updateAction, _entity, FAILURE)
     current.update(entity.id, { status : FAILURE})
-    console.log(error)
+    //console.log(error)
   })
   db.close()
 }

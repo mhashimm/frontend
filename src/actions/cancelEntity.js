@@ -1,6 +1,4 @@
-import Dexie from 'dexie'
 import createDb from '~/actions/createDb'
-import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
 
 export function cancelEntity({version, entity, username, table, origTable, updateAction}){
   const db = createDb(version, username)

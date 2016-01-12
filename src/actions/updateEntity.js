@@ -1,6 +1,5 @@
 'use strict';
 
-import Dexie from 'dexie'
 import config from 'config'
 import createDb from '~/actions/createDb'
 import { dispatch } from './dispatch'
@@ -22,7 +21,7 @@ function updateEntity({version, path, entity, username, table, origTable, update
     if(o.status === undefined)
       orig.put(o)
     }).then(() => current.put(Object.assign({}, _entity, {status: PENDING})))
-  .catch(error => window.console.log(error))
+  //.catch(error => console.log(error))
 
   const isNew = typeof _entity.isNew !== 'undefined' && _entity.isNew
 
@@ -32,7 +31,7 @@ function updateEntity({version, path, entity, username, table, origTable, update
   	mode: 'cors',
   	headers: new Headers({
   		'Authorization':  'Bearer ' + global.keycloak.token,
-      'Content-Type' :  'application/json',
+      'Content-Type' :  'application/json'
     	})
     }).then(response => {
       if(response.status == 200 || response.status == 201){
@@ -43,13 +42,13 @@ function updateEntity({version, path, entity, username, table, origTable, update
           current.delete(_entity.id)
           current.put(_local)
           orig.delete(_entity.id)
-        }).catch(error => window.console.log(error))
+        })//.catch(error => console.log(error))
         setTimeout(() => dispatch(updateAction, _local), 2000)
       }
       else {
          dispatch(updateAction, _entity, FAILURE)
          current.put(Object.assign({}, _entity, {status: FAILURE}))
-         console.log(response.statusText)
+         //console.log(response.statusText)
       }
     }
     ).catch(error => {
@@ -57,8 +56,8 @@ function updateEntity({version, path, entity, username, table, origTable, update
       db.transaction('rw', current, orig, function() {
         current.delete(_entity.id).then(() =>
         current.put(Object.assign({}, _entity, {status: FAILURE})))
-      }).catch(error => window.console.log(error))
-      window.console.log(error)
+      })//.catch(error => window.console.log(error))
+      //console.log(error)
     })
     db.close()
 }

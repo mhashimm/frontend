@@ -4,7 +4,7 @@ import createEntity from '~/actions/createEntity'
 import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import createDb from '~/actions/createDb'
-import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
+import { PENDING } from '~/stores/status'
 
 export const FACULTY_ADDED = 'FACULTY_ADDED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
