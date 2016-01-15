@@ -1,16 +1,17 @@
-import React, {PropTypes, Component} from 'react';
-import { connect } from 'react-redux';
-import {reduxForm} from 'redux-form';
-import { pushPath } from 'redux-simple-router';
+import React, {PropTypes, Component} from 'react'
+import { connect } from 'react-redux'
+import {reduxForm} from 'redux-form'
+import { pushPath } from 'redux-simple-router'
 import * as elements from '~/components/elements'
 
-require('../../../../../../../styles/react-bootstrap-switch.css');
-var Switch = require('react-bootstrap-switch');
+require('../../../../../../../styles/react-bootstrap-switch.css')
+var Switch = require('react-bootstrap-switch')
 
-import { createValidator } from '~/utils/validate';
-import { updateDepartment } from '../../../store/actions';
-import departmentValidator from '../../../validation';
-import InputElement from '~/components/inputElement';
+import { createValidator } from '~/utils/validate'
+import { updateDepartment } from '../../../store/actions'
+import departmentValidator from '../../../validation'
+import InputElement from '~/components/inputElement'
+import SelectElement from '~/components/selectElement'
 
 class Update extends Component {
   render(){
@@ -18,7 +19,9 @@ class Update extends Component {
     return (
       <div>
         <h3>تعديل القسم</h3>
-        <ReduxForm onSubmit={(e) => this.handleSubmit(e)} switchValue={department.isActive} initialValues={{...department}}/>
+        <ReduxForm onSubmit={(e) => this.handleSubmit(e)}
+          faculties={this.props.faculties}
+          switchValue={department.isActive} initialValues={{...department}}/>
       </div>
     )
   }
@@ -36,24 +39,28 @@ class UpdateDepartmentForm extends Component {
     fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     resetForm: PropTypes.func.isRequired,
-    submitting: PropTypes.bool.isRequired
+    submitting: PropTypes.bool.isRequired,
+    faculties: PropTypes.array.isRequired
   }
 
   render(){
     const {
-      fields: {id, isActive, title, titleTr, isNew},
+      fields: {id, isActive, title, titleTr, facultyId, isNew},
       handleSubmit,
       resetForm,
-      submitting
-    } = this.props;
+      submitting,
+      faculties
+    } = this.props
 
     return(
       <div>
         <form onSubmit={handleSubmit} className="form-horizontal">
-          <input type="hidden" {...id}></input>
+          <InputElement field={id} isReadOnly={true} label='الإختصار'/>
           { this.props.isNew ? <input type="hidden" {...isNew}></input> : null}
           <InputElement field={title} placeholder="أدخل إسم القسم" label="إسم القسم"/>
           <InputElement field={titleTr} placeholder="أدخل الإسم بالإنجليزية" label="الإسم بالإنجليزية"/>
+          <SelectElement field={facultyId} placeholder="إختر الكلية" label="الكلية"
+            options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}) ) } />
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
               <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشط" />
@@ -74,10 +81,13 @@ class UpdateDepartmentForm extends Component {
 
 const ReduxForm = reduxForm({
   form: 'updateDepartment',
-  fields: ['id', 'isActive', 'title', 'titleTr', 'isNew'],
+  fields: ['id', 'isActive', 'title', 'titleTr', 'facultyId', 'isNew'],
   validate: createValidator(departmentValidator)
 }
-)(UpdateDepartmentForm);
+)(UpdateDepartmentForm)
 
 
-module.exports = connect((state) => ({departments: state.departments}))(Update)
+module.exports = connect((state) => ({
+  departments: state.departments,
+  faculties: state.faculties
+}))(Update)

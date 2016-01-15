@@ -3,6 +3,7 @@ import config from 'config'
 import createEntity from '~/actions/createEntity'
 import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
+import {loadFaculties} from '../../faculties/store/actions'
 import createDb from '~/actions/createDb'
 import { PENDING } from '~/stores/status'
 
@@ -54,6 +55,7 @@ export function cancelDepartment(id){
 
 export function loadDepartments(){
   return function(dispatch, getState){
+    dispatch(loadFaculties())
     let db = createDb(undefined, getState().user.username)
     db.open()
     db.departments.toArray(function(_departments) {

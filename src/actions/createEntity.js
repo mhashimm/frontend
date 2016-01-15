@@ -33,7 +33,8 @@ function createEntity({version, path, entity, username, table, updateAction}){
         current.add(_local)
         }).catch(error => {
           dispatch(updateAction, _entity, FAILURE)
-          //console.log(error)
+          console.log('######## Dexie Error #############');
+          console.log(error)
       })
       dispatch(updateAction, _local, SUCCESS)
       setTimeout(() => dispatch(updateAction, _local), 2000)

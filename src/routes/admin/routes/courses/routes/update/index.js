@@ -1,5 +1,5 @@
 module.exports = {
-  path: 'update',
+  path: 'update/:id',
 
   getComponent(location, cb) {
     require.ensure([], (require) => {

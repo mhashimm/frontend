@@ -2,27 +2,27 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as elements from '~/components/elements'
 import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
-import { cancelDepartment, loadDepartments } from '../store/actions'
+import { cancelCourse, loadCourses } from '../store/actions'
 
-class DepartmentsComponent extends Component {
+class CoursesComponent extends Component {
   componentDidMount(){
-    this.props.dispatch(loadDepartments())
+    this.props.dispatch(loadCourses())
   }
 
   render(){
-    const {departments} = this.props
+    const {courses} = this.props
     return (
       <div>
         {this.props.children ||
         (
           <div>
             <span className="h3">
-              <i className="fa fa-building"></i>
-              <span style={{marginRight:5}}>قائمة الأقسام</span>
+              <i className="fa fa-book"></i>
+              <span style={{marginRight:5}}>قائمة المقررات</span>
             </span>
-            <elements.CreateButton text="إضافة" kls="pull-left" url={`/admin/departments/create`}/>
+            <elements.CreateButton text="إضافة" kls="pull-left" url={`/admin/courses/create`}/>
             <br/><br/>
-            <DepartmentTable departments={departments} handleCancel={ e => this.handleCancel(e)}/>
+            <CourseTable courses={courses} handleCancel={ e => this.handleCancel(e)}/>
           </div>
         )
       }
@@ -31,44 +31,42 @@ class DepartmentsComponent extends Component {
   }
 
   handleCancel(id){
-    this.props.dispatch(cancelDepartment(id))
+    this.props.dispatch(cancelCourse(id))
   }
 }
 
-var DepartmentTable = (props) =>
+var CourseTable = (props) =>
   <div>
     <table className="table table-bordered table-hover">
       <thead>
         <tr>
           <th>الإختصار</th>
-          <th>إسم القسم</th>
+          <th>إسم المقرر</th>
           <th>الإسم بالإنجليزية</th>
-          <th>الكلية</th>
           <th>نشط</th>
           <th className="col-md-2"></th>
         </tr>
       </thead>
       <tbody>
-        {props.departments.map((department) =>
-          <DepartmentRow {...department} key={department.id} handleCancel={props.handleCancel} />
+        {props.courses.map((course) =>
+          <CourseRow {...course} key={course.id} handleCancel={props.handleCancel} />
         )}
       </tbody>
     </table>
   </div>;
 
-var DepartmentRow = (props) =>
+var CourseRow = (props) =>
   <tr className={getClass(props.status)}>
     <td>{props.id}</td>
     <td>{props.title}</td>
     <td>{props.titleTr}</td>
-    <td>{props.facultyTitle}</td>
     <td>
       <elements.TextBool value={props.isActive}/>
     </td>
     <td>
-      <elements.UpdateLink url={`/admin/departments/update/${props.id}`}
+      <elements.UpdateLink url={`/admin/courses/update/${props.id}`}
         disabled={props.status === PENDING}/>
-      <elements.DetailsLink url={`/admin/departments/details/${props.id}`}
+      <elements.DetailsLink url={`/admin/courses/details/${props.id}`}
         style={{marginRight: 10}} disabled={props.status === PENDING}/>
       { props.status === FAILURE ?
         <elements.CancelLink handleCancel={props.handleCancel} id={props.id} style={{marginRight: 10}}/>
@@ -84,4 +82,4 @@ function getClass(prop) {
   else return ''
 }
 
-module.exports = connect(state => ({departments: state.departments}))(DepartmentsComponent)
+module.exports = connect(state => ({courses: state.courses}))(CoursesComponent)

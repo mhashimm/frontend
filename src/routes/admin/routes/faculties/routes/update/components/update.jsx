@@ -50,7 +50,7 @@ class UpdateFacultyForm extends Component {
     return(
       <div>
         <form onSubmit={handleSubmit} className="form-horizontal">
-          <input type="hidden" {...id}></input>
+          <InputElement field={id} isReadOnly={true} label='الإختصار'/>
           { this.props.isNew ? <input type="hidden" {...isNew}></input> : null}
           <InputElement field={title} placeholder="أدخل إسم الكلية" label="إسم الكلية"/>
           <InputElement field={titleTr} placeholder="أدخل إسم الكلية بالإنجليزية" label="الإسم بالإنجليزية"/>

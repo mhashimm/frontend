@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes} from 'react'
 
 const helpStyle = {
   fontSize: 12
@@ -31,9 +31,15 @@ export default class InputElement extends Component {
           (<div className="form-group">
             <label className="col-md-2 control-label">{this.props.label}</label>
             <div className="col-md-10">
-              <input className="form-control" type="text" {...this.props.field}
-                placeholder={this.props.placeholder}
-                aria-describedby={this.props.field.name + '-help-block'}></input>
+              {this.props.isReadOnly ?
+                <input className="form-control" readOnly type="text" {...this.props.field}
+                  placeholder={this.props.placeholder}
+                  aria-describedby={this.props.field.name + '-help-block'}></input>
+                :
+                <input className="form-control" type="text" {...this.props.field}
+                  placeholder={this.props.placeholder}
+                  aria-describedby={this.props.field.name + '-help-block'}></input>
+              }
               <span id={this.props.field.name + '-help-block'} style={helpStyle} className="help-block">{this.props.help}</span>
             </div>
           </div>)}

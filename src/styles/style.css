@@ -50,6 +50,10 @@ h6 small,
   color: #999999;
 }
 
+.form-control {
+  height: 35px;
+}
+
 .active-port a svg {
   background: #f5f5f5;
   padding: 3px;

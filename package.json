@@ -101,6 +101,7 @@
     "lodash": "^3.10.1",
     "node-uuid": "^1.4.7",
     "normalize.css": "^3.0.3",
+    "rc-select": "^5.8.0",
     "react": "^0.14.3",
     "react-bootstrap-switch": "^3.4.0",
     "react-dom": "^0.14.3",
