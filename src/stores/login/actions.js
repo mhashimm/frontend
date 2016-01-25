@@ -60,6 +60,16 @@ export function login(){
           else {
             global.keycloak = keycloak
             dispatch(loginSuccess())
+
+            /**************************ORG WORKER****************************/
+            var orgWorker = require("worker!../../workers/orgWorker.js");
+            var worker = new orgWorker();
+            worker.postMessage(
+              {
+                token: keycloak.token,
+                version: 1,
+                username: keycloak.tokenParsed.username
+              });
           }
         }).error(error => dispatch(loginFailure(error)))
 

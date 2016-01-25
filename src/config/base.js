@@ -1,9 +1,9 @@
 'use strict';
 
-const facultySchema = {name: 'faculties', schema: 'id, title, titleTr, isActive, status'}
-const departmentSchema = {name: 'departments', schema: 'id, title, titleTr, isActive, status'}
-const courseSchema = {name: 'courses', schema: 'id, title, titleTr, facultyId, departmentId, remarks, isActive, status'}
-const programsSchema = {name: 'programs', schema: 'id, title, titleTr, facultyId, terms, creditHours, isActive, status'}
+const facultySchema = {name: 'faculties', schema: 'id, title, titleTr, isActive, status, ts'}
+const departmentSchema = {name: 'departments', schema: 'id, title, titleTr, isActive, status, ts'}
+const courseSchema = {name: 'courses', schema: 'id, title, titleTr, facultyId, departmentId, remarks, isActive, status, ts'}
+const programsSchema = {name: 'programs', schema: 'id, title, titleTr, facultyId, terms, creditHours, isActive, status, ts'}
 
 // Settings configured here will be merged into the final config object.
 export default {
@@ -19,6 +19,11 @@ export default {
       programsSchema,
       Object.assign({}, programsSchema, {name: 'programsOrig'})
     ]
+  },
+  org: {
+    path: {
+      get: '/admin'
+    }
   },
   faculties: {
     path: {
