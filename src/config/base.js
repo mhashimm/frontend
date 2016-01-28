@@ -5,8 +5,10 @@ const departmentSchema = {name: 'departments', schema: 'id, title, titleTr, isAc
 const courseSchema = {name: 'courses', schema: 'id, title, titleTr, facultyId, departmentId, remarks, isActive, status, ts'}
 const programsSchema = {name: 'programs', schema: 'id, title, titleTr, facultyId, terms, creditHours, isActive, status, ts'}
 
-// Settings configured here will be merged into the final config object.
 export default {
+  onlineCheckInterval: 10000,
+  url: 'http://localhost:8888',
+  cors: 'cors',
   db: {
     name: 'sisdndb',
     version_1: [

@@ -19,7 +19,7 @@ function createEntity({version, path, entity, username, table, updateAction}){
   global.fetch(config.apiUrl + path.post, {
     method: 'POST',
     body: JSON.stringify(_entity),
-    mode: 'cors',
+    mode: config.cors,
     headers: new Headers({
       'Authorization':  'Bearer ' + global.keycloak.token,
       'Content-Type' :  'application/json'

@@ -1,11 +1,7 @@
 import config from 'config'
 import createDb from '~/actions/createDb'
 
-<<<<<<< HEAD
-global.onmessage = function getOrg(event) {
-=======
 onmessage = function getOrg(event) {
->>>>>>> 4d9448034c21ff47371f2606e5e0debecfa04dc3
   const {token, version, username} = event.data
   let db = createDb(version, username)
   db.open()
@@ -17,10 +13,10 @@ onmessage = function getOrg(event) {
     })
   }))
   .then(lst => {
-    global.fetch(config.apiUrl + config.org.path.get +
+    fetch(config.apiUrl + config.org.path.get +
         `?facultyts=${lst[2]}&departmentts=${lst[1]}&coursets=${lst[0]}&programts=${lst[3]}`, {
         method: 'GET',
-        mode: 'cors',
+        mode: config.cors,
         headers: new Headers({
           'Authorization':  'Bearer ' + token
         })

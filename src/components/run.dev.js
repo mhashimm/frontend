@@ -7,10 +7,13 @@ import { Provider } from 'react-redux'
 import { syncReduxAndRouter} from 'redux-simple-router'
 
 import configureStore from '~/stores/configureStore'
+import isOnline from '~/stores/isOnline'
 import RootRoute from './RootRoutes'
 
 const store = configureStore()
 global.store = store
+
+isOnline(store)
 
 const history = useBasename(createHistory)({ basename: '/' })
 syncReduxAndRouter(history, store)

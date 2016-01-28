@@ -62,7 +62,7 @@ export function login(){
             dispatch(loginSuccess())
 
             /**************************ORG WORKER****************************/
-            var orgWorker = require("worker!../../workers/orgWorker.js");
+            var orgWorker = require('worker!../../workers/orgWorker.js');
             var worker = new orgWorker();
             worker.postMessage(
               {

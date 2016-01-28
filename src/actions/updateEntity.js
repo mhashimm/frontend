@@ -28,7 +28,7 @@ function updateEntity({version, path, entity, username, table, origTable, update
   global.fetch(config.apiUrl + (isNew ? path.post : path.put), {
   	method: isNew ? 'POST' : 'PUT',
     body: JSON.stringify(_entity),
-  	mode: 'cors',
+  	mode: config.cors,
   	headers: new Headers({
   		'Authorization':  'Bearer ' + global.keycloak.token,
       'Content-Type' :  'application/json'

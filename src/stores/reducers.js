@@ -7,6 +7,7 @@ import {reducer as facultyReducer} from '../routes/admin/routes/faculties/store/
 import {reducer as departmentReducer} from '../routes/admin/routes/departments/store/reducer'
 import {reducer as coursesReducer} from '../routes/admin/routes/courses/store/reducer'
 import {reducer as programsReducer} from '../routes/admin/routes/programs/store/reducer'
+import {reducer as onlineReducer} from './online/reducer'
 
 const rootReducer = combineReducers({
   faculties: facultyReducer,
@@ -15,7 +16,8 @@ const rootReducer = combineReducers({
   programs: programsReducer,
   form: formReducer,
   routing: routeReducer,
-  user: loginReducer
+  user: loginReducer,
+  isOnline: onlineReducer
   }
 )
 
