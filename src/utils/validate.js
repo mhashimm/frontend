@@ -36,6 +36,13 @@ export function integer(value) {
   }
 }
 
+export function number(value) {
+  //if (typeof value === 'number' && isFinite(value)) {
+  if (value !== '' && value !== undefined && (isNaN(parseFloat(value)) || !isFinite(value))) {
+    return 'يجب أن يكون رقماً';
+  }
+}
+
 export function oneOf(enumeration) {
   return value => {
     if (!~enumeration.indexOf(value)) {
@@ -80,4 +87,11 @@ export function createValidator(rules) {
     });
     return errors;
   };
+}
+
+export function validateId(values, dispatch, props) {
+  return new Promise((resolve, reject) => {
+    if(props.ids.indexOf(values.id) >= 0) reject({id: 'الإختصار غير متاح'})
+    else resolve()
+  })
 }

@@ -4,8 +4,15 @@ import baseConfig from './base';
 
 
 let config = {
-  appEnv: 'dist'  // feel free to remove the appEnv property here
+  appEnv: 'dist',
+  apiUrl: 'http://localhost:8888/api',
+  keycloak: {
+    url: 'http://localhost:8080/auth',
+    realm: 'sisdn-realm',
+    clientId: 'sisdn',
+    redirect_uri: 'http://localhost:9000',
+    flow: 'standard'
+  }
 };
 
-export default Object.freeze(Object.assign({}, baseConfig, config));
-
+module.exports = Object.freeze(Object.assign({}, baseConfig, config));

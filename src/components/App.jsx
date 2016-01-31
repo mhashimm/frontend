@@ -1,20 +1,27 @@
-//require('styles/style.css');
+import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import Dashboard from './dashboard'
+import * as actionCreators from '../stores/login/actions'
 
-import React from 'react';
-import Dashboard from './dashboard';
-import { pushPath } from 'redux-simple-router';
+require('../styles/style.css')
 
-require('../styles/style.css');
-require('../fonts/JF-Flat-Regular.woff');
+class App extends Component {
+  constructor(props){
+    super(props)
+    props.actions.login()
+  }
 
-class App extends React.Component {
   render() {
     return (
-      <div className="container">
+      <div className='container'>
           { this.props.children || <Dashboard /> }
       </div>
     );
   }
 }
 
-module.exports = App
+module.exports = connect(
+  state => ({ auth: state.auth }),
+  dispatch => ({ actions: bindActionCreators(actionCreators, dispatch) })
+)(App)
