@@ -1,7 +1,7 @@
 import config from 'config'
 import createDb from '~/actions/createDb'
 
-onmessage = function getOrg(event) {
+global.onmessage = function getOrg(event) {
   const {token, version, username} = event.data
   let db = createDb(version, username)
   db.open()

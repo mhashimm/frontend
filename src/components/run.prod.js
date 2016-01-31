@@ -7,13 +7,14 @@ import { syncReduxAndRouter} from 'redux-simple-router'
 
 import configureStore from '~/stores/configureStore'
 import isOnline from '~/stores/isOnline'
+import entityUpdateWorkerDispatch from '../workers/entityUpdateWorkerDispatch'
 import RootRoute from './RootRoutes'
 
 const store = configureStore()
 global.store = store
 
-//hook online status webworker
 isOnline(store)
+entityUpdateWorkerDispatch(store)
 
 const history = useBasename(createHistory)({ basename: '/' })
 syncReduxAndRouter(history, store)
