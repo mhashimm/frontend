@@ -6,38 +6,39 @@ import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import {loadDepartments} from '../../departments/store/actions'
 import createDb from '~/actions/createDb'
-import { PENDING } from '~/stores/status'
+import { PENDING_IDLE } from '~/stores/status'
 
 export const COURSE_ADDED = 'COURSE_ADDED'
 export const COURSE_UPDATED = 'COURSE_UPDATED'
 export const COURSE_CANCELED = 'COURSE_CANCELED'
 export const COURSES_LOADED = 'COURSES_LOADED'
 
+var entityUpdateWorker = require('shared-worker!../../../../../workers/entityUpdateWorker')
+var entityWorker = new entityUpdateWorker()
+
 export function createCourse(course){
-  return function(dispatch, getState){
-    let entity = Object.assign({}, course, { isActive: true, status: PENDING, isNew: true })
+  return function(dispatch){
+    let entity = Object.assign({}, course,
+      { isActive: true, status: PENDING_IDLE, isNew: true })
+
     dispatch(courseAdded(entity))
-    createEntity({
-      version: 1,
+
+    entityWorker.port.postMessage({
       path: config.courses.path,
       entity: entity,
-      username: getState().user.username,
       table: 'courses',
-      updateAction: (course) => (dispatch) => dispatch(courseUpdated(course))
+      action: COURSE_UPDATED
     })
   }
 }
 
 export function updateCourse(course){
-  return function(dispatch, getState){
-    updateEntity({
-      version: 1,
+  return function(){
+    entityWorker.port.postMessage({
       path: config.courses.path,
       entity: course,
-      username: getState().user.username,
       table: 'courses',
-      origTable: 'coursesOrig',
-      updateAction: (course) => (dispatch) => dispatch(courseUpdated(course))
+      action: COURSE_UPDATED
     })
   }
 }
@@ -72,28 +73,28 @@ export function loadCourses(){
 export function coursesLoaded(courses){
   return {
     type: COURSES_LOADED,
-    courses
+    entities: courses
   }
 }
 
 export function courseAdded(course){
   return {
     type: COURSE_ADDED,
-    course
+    entity: course
   }
 }
 
 export function courseUpdated(course){
   return{
     type: COURSE_UPDATED,
-    course
+    entity: course
   }
 }
 
 export function courseCanceled(id, course){
   return{
     type: COURSE_CANCELED,
-    course,
+    entity: course,
     id
   }
 }

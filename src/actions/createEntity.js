@@ -2,7 +2,7 @@ import config from 'config'
 import createDb from './createDb'
 import {dispatch} from './dispatch'
 
-import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
+import { SUCCESS, FAILURE, PENDING_IDLE } from '~/stores/status'
 
 function createEntity({version, path, entity, username, table, updateAction}){
   let _entityTemp = Object.assign({}, entity)
@@ -13,7 +13,7 @@ function createEntity({version, path, entity, username, table, updateAction}){
   db.open()
   const current = db[table]
 
-  current.add(Object.assign({}, _entity, { status: PENDING }))
+  current.add(Object.assign({}, _entity, { status: PENDING_IDLE }))
     .catch( error => window.console.log(error))
 
   global.fetch(config.apiUrl + path.post, {

@@ -5,38 +5,39 @@ import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import createDb from '~/actions/createDb'
-import { PENDING } from '~/stores/status'
+import { PENDING_IDLE } from '~/stores/status'
 
 export const DEPARTMENT_ADDED = 'DEPARTMENT_ADDED'
 export const DEPARTMENT_UPDATED = 'DEPARTMENT_UPDATED'
 export const DEPARTMENT_CANCELED = 'DEPARTMENT_CANCELED'
 export const DEPARTMENTS_LOADED = 'DEPARTMENTS_LOADED'
 
+var entityUpdateWorker = require('shared-worker!../../../../../workers/entityUpdateWorker')
+var entityWorker = new entityUpdateWorker()
+
 export function createDepartment(department){
-  return function(dispatch, getState){
-    let entity = Object.assign({}, department, { isActive: true, status: PENDING, isNew: true })
+  return function(dispatch){
+    let entity = Object.assign({}, department,
+      { isActive: true, status: PENDING_IDLE, isNew: true })
+
     dispatch(departmentAdded(entity))
-    createEntity({
-      version: 1,
+
+    entityWorker.port.postMessage({
       path: config.departments.path,
       entity: entity,
-      username: getState().user.username,
       table: 'departments',
-      updateAction: (department) => (dispatch) => dispatch(departmentUpdated(department))
+      action: DEPARTMENT_UPDATED
     })
   }
 }
 
 export function updateDepartment(department){
-  return function(dispatch, getState){
-    updateEntity({
-      version: 1,
+  return function(){
+    entityWorker.port.postMessage({
       path: config.departments.path,
       entity: department,
-      username: getState().user.username,
       table: 'departments',
-      origTable: 'departmentsOrig',
-      updateAction: (department) => (dispatch) => dispatch(departmentUpdated(department))
+      action: DEPARTMENT_UPDATED
     })
   }
 }
@@ -70,28 +71,28 @@ export function loadDepartments(){
 export function departmentsLoaded(departments){
   return {
     type: DEPARTMENTS_LOADED,
-    departments
+    entities: departments
   }
 }
 
 export function departmentAdded(department){
   return {
     type: DEPARTMENT_ADDED,
-    department
+    entity: department
   }
 }
 
 export function departmentUpdated(department){
   return{
     type: DEPARTMENT_UPDATED,
-    department
+    entity: department
   }
 }
 
 export function departmentCanceled(id, department){
   return{
     type: DEPARTMENT_CANCELED,
-    department,
+    entity: department,
     id
   }
 }

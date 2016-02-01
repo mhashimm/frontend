@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import * as elements from '~/components/elements'
-import { SUCCESS, FAILURE, PENDING } from '~/stores/status'
+import { SUCCESS, FAILURE, PENDING_IDLE, PENDING_ACTIVE } from '~/stores/status'
 import { cancelDepartment, loadDepartments } from '../store/actions'
 
 class DepartmentsComponent extends Component {
@@ -67,18 +67,18 @@ var DepartmentRow = (props) =>
     </td>
     <td>
       <elements.UpdateLink url={`/admin/departments/update/${props.id}`}
-        disabled={props.status === PENDING}/>
+        disabled={props.status === PENDING_ACTIVE}/>
       <elements.DetailsLink url={`/admin/departments/details/${props.id}`}
-        style={{marginRight: 10}} disabled={props.status === PENDING}/>
-      { props.status === FAILURE ?
+        style={{marginRight: 10}} disabled={props.status === PENDING_ACTIVE}/>
+      { props.status === FAILURE || props.status === PENDING_IDLE ?
         <elements.CancelLink handleCancel={props.handleCancel} id={props.id} style={{marginRight: 10}}/>
       : null }
-      { props.status === PENDING ? <elements.SpinCog style={{marginRight: 10}}/> : null }
+      { props.status === PENDING_ACTIVE ? <elements.SpinCog style={{marginRight: 10}}/> : null }
     </td>
   </tr>;
 
 function getClass(prop) {
-  if(prop === PENDING) return 'warning'
+  if(prop === PENDING_IDLE || prop === PENDING_ACTIVE) return 'warning'
   else if(prop === SUCCESS) return 'success'
   else if(prop === FAILURE) return 'danger'
   else return ''

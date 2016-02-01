@@ -5,14 +5,14 @@ export function reducer(state = [], action){
 
   switch (action.type) {
     case actType.DEPARTMENTS_LOADED:
-      return action.departments
+      return action.entities
 
     case actType.DEPARTMENT_CANCELED:
       index = state.findIndex(f => f.id === action.id)
-      return action.department !== undefined
+      return action.entity !== undefined
       ? [
           ...state.slice(0, index),
-          action.department,
+          action.entity,
           ...state.slice(index + 1)
        ]
       : [
@@ -22,15 +22,15 @@ export function reducer(state = [], action){
 
     case actType.DEPARTMENT_ADDED:
       return [
-        action.department,
+        action.entity,
          ...state
        ]
 
     case actType.DEPARTMENT_UPDATED:
-      index = state.findIndex(f => f.id === action.department.id)
+      index = state.findIndex(f => f.id === action.entity.id)
       return [
         ...state.slice(0, index),
-        action.department,
+        action.entity,
         ...state.slice(index + 1)
         ]
 

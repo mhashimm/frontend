@@ -4,38 +4,39 @@ import createEntity from '~/actions/createEntity'
 import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import createDb from '~/actions/createDb'
-import { PENDING } from '~/stores/status'
+import { PENDING_IDLE } from '~/stores/status'
 
 export const FACULTY_ADDED = 'FACULTY_ADDED'
 export const FACULTY_UPDATED = 'FACULTY_UPDATED'
 export const FACULTY_CANCELED = 'FACULTY_CANCELED'
 export const FACULTIES_LOADED = 'FACULTIES_LOADED'
 
+var entityUpdateWorker = require('shared-worker!../../../../../workers/entityUpdateWorker')
+var entityWorker = new entityUpdateWorker()
+
 export function createFaculty(faculty){
-  return function(dispatch, getState){
-    let entity = Object.assign({}, faculty, { isActive: true, status: PENDING, isNew: true })
+  return function(dispatch){
+    let entity = Object.assign({}, faculty,
+      { isActive: true, status: PENDING_IDLE, isNew: true })
+
     dispatch(facultyAdded(entity))
-    createEntity({
-      version: 1,
+
+    entityWorker.port.postMessage({
       path: config.faculties.path,
       entity: entity,
-      username: getState().user.username,
       table: 'faculties',
-      updateAction: (faculty) => (dispatch) => dispatch(facultyUpdated(faculty))
+      action: FACULTY_UPDATED
     })
   }
 }
 
 export function updateFaculty(faculty){
-  return function(dispatch, getState){
-    updateEntity({
-      version: 1,
+  return function(){
+    entityWorker.port.postMessage({
       path: config.faculties.path,
       entity: faculty,
-      username: getState().user.username,
       table: 'faculties',
-      origTable: 'facultiesOrig',
-      updateAction: (faculty) => (dispatch) => dispatch(facultyUpdated(faculty))
+      action: FACULTY_UPDATED
     })
   }
 }
@@ -68,28 +69,28 @@ export function loadFaculties(){
 export function facultiesLoaded(faculties){
   return {
     type: FACULTIES_LOADED,
-    faculties
+    entities: faculties
   }
 }
 
 export function facultyAdded(faculty){
   return {
     type: FACULTY_ADDED,
-    faculty
+    entity: faculty
   }
 }
 
 export function facultyUpdated(faculty){
   return{
     type: FACULTY_UPDATED,
-    faculty
+    entity: faculty
   }
 }
 
 export function facultyCanceled(id, faculty){
   return{
     type: FACULTY_CANCELED,
-    faculty,
-    id
+    entity: faculty,
+    id: id
   }
 }
