@@ -2,8 +2,8 @@ import config from 'config'
 import createDb from '~/actions/createDb'
 
 global.onmessage = function getOrg(event) {
-  const {token, version, username} = event.data
-  let db = createDb(version, username)
+  const {user} = event.data
+  let db = createDb(user)
   db.open()
   Promise.all(
     ['courses', 'departments', 'faculties', 'programs'].map(key => {
@@ -13,12 +13,12 @@ global.onmessage = function getOrg(event) {
     })
   }))
   .then(lst => {
-    fetch(config.apiUrl + config.org.path.get +
+    fetch(config.apiUrl + config.admin.path.get +
         `?facultyts=${lst[2]}&departmentts=${lst[1]}&coursets=${lst[0]}&programts=${lst[3]}`, {
         method: 'GET',
         mode: config.cors,
         headers: new Headers({
-          'Authorization':  'Bearer ' + token
+          'Authorization':  'Bearer ' + user.token
         })
       }).then(response => {
         if(response.status == 200){

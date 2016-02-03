@@ -15,7 +15,10 @@ class App extends Component {
   render() {
     return (
       <div className='container'>
-          { this.props.children || <Dashboard /> }
+        <div className="well well-large">
+            Basic panel example
+        </div>
+        { this.props.children || <Dashboard /> }
       </div>
     );
   }

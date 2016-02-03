@@ -1,7 +1,5 @@
 
 import config from 'config'
-import createEntity from '~/actions/createEntity'
-import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import createDb from '~/actions/createDb'
@@ -28,7 +26,7 @@ export function createProgram(program){
     dispatch(programAdded(entity))
 
     entityWorker.port.postMessage({
-      path: config.programs.path,
+      path: config.admin.programs.path,
       entity: entity,
       table: 'programs',
       action: PROGRAM_UPDATED
@@ -44,7 +42,7 @@ export function updateProgram(program){
     })
 
     entityWorker.port.postMessage({
-      path: config.programs.path,
+      path: config.admin.programs.path,
       entity: entity,
       table: 'programs',
       action: PROGRAM_UPDATED
@@ -55,19 +53,19 @@ export function updateProgram(program){
 export function cancelProgram(id){
   return function(dispatch, getState){
     cancelEntity({
-      version: 1,
       entity: getState().programs.find(p => p.id === id),
-      username: getState().user.username,
+      user: getState().user,
       table: 'programs',
-      origTable: 'programsOrig',
-      updateAction: (id, program) => (dispatch) => dispatch(programCanceled(id, program))})
+      updateAction: (id, program) => (dispatch) => dispatch(programCanceled(id, program)),
+      dispatch: dispatch
+    })
   }
 }
 
 export function loadPrograms(){
   return function(dispatch, getState){
     dispatch(loadFaculties())
-    let db = createDb(undefined, getState().user.username)
+    let db = createDb(getState().user)
     db.open()
     db.programs.toArray(function(_programs) {
        dispatch(programsLoaded(_programs))

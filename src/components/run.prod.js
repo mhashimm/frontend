@@ -11,7 +11,6 @@ import entityUpdateWorkerDispatch from '../workers/entityUpdateWorkerDispatch'
 import RootRoute from './RootRoutes'
 
 const store = configureStore()
-global.store = store
 
 isOnline(store)
 entityUpdateWorkerDispatch(store)

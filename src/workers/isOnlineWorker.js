@@ -1,6 +1,6 @@
 import config from 'config'
 
-global.onmessage = function getOrg(event) {
+global.onmessage = function getOrg() {
   setInterval(() => {
     global.fetch(config.url, {
       method: 'GET',

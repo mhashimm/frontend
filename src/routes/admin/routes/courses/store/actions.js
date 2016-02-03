@@ -1,7 +1,5 @@
 
 import config from 'config'
-import createEntity from '~/actions/createEntity'
-import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import {loadDepartments} from '../../departments/store/actions'
@@ -24,7 +22,7 @@ export function createCourse(course){
     dispatch(courseAdded(entity))
 
     entityWorker.port.postMessage({
-      path: config.courses.path,
+      path: config.admin.courses.path,
       entity: entity,
       table: 'courses',
       action: COURSE_UPDATED
@@ -35,7 +33,7 @@ export function createCourse(course){
 export function updateCourse(course){
   return function(){
     entityWorker.port.postMessage({
-      path: config.courses.path,
+      path: config.admin.courses.path,
       entity: course,
       table: 'courses',
       action: COURSE_UPDATED
@@ -46,12 +44,12 @@ export function updateCourse(course){
 export function cancelCourse(id){
   return function(dispatch, getState){
     cancelEntity({
-      version: 1,
       entity: getState().courses.find(f => f.id === id),
-      username: getState().user.username,
+      user: getState().user,
       table: 'courses',
-      origTable: 'coursesOrig',
-      updateAction: (id, course) => (dispatch) => dispatch(courseCanceled(id, course))})
+      updateAction: (id, course) => (dispatch) => dispatch(courseCanceled(id, course)),
+      dispatch: dispatch
+    })
   }
 }
 
@@ -59,7 +57,7 @@ export function loadCourses(){
   return function(dispatch, getState){
     dispatch(loadFaculties())
     dispatch(loadDepartments())
-    let db = createDb(undefined, getState().user.username)
+    let db = createDb(getState().user)
     db.open()
     db.courses.toArray(function(_courses) {
        dispatch(coursesLoaded(_courses))

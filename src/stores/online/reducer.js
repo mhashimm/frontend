@@ -1,4 +1,4 @@
-import {IS_ONLINE, IS_OFFLINE} from './actions'
+import {IS_ONLINE} from './actions'
 
 var entityUpdateWorker = require('shared-worker!../../workers/entityUpdateWorker.js')
 const entityWorker = new entityUpdateWorker()

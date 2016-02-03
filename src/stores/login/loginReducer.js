@@ -1,7 +1,10 @@
 import config from 'config'
 import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, TOKEN_FAILURE, TOKEN_SUCCESS } from './actions'
+
 var entityUpdateWorker = require('shared-worker!../../workers/entityUpdateWorker.js')
 const entityWorker = new entityUpdateWorker()
+var orgWorker = require('worker!../../workers/orgWorker.js')
+const worker = new orgWorker()
 
 export function loginReducer(state = {authenticated: false, pending: true}, action){
   switch (action.type) {
@@ -9,8 +12,8 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
       return Object.assign({}, state, {authenticated: false, pending: true})
     case LOGIN_SUCCESS:
       const user = parseToken()
-      entityWorker.port.postMessage({username: user.username})
-      entityWorker.port.postMessage({token: user.token})
+      entityWorker.port.postMessage({...user})
+      worker.postMessage({user: user})
       return Object.assign({}, state, user, { authenticated: true, pending: false})
     case LOGIN_FAILURE:
       return Object.assign({}, state, {authenticated: false, pending: false})

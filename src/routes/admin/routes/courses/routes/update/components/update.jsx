@@ -15,6 +15,11 @@ import SelectElement from '~/components/selectElement'
 import TextElement from '~/components/textElement'
 
 class Update extends Component {
+  constructor(props){
+    super(props)
+    //props.facultyId = props.faculties.find(f => f.id === props.params.id).id
+  }
+
   render(){
     const course = this.props.courses.find(c => c.id === this.props.params.id)
     return (
@@ -62,9 +67,10 @@ class UpdateCourseForm extends Component {
           <InputElement field={title} placeholder="أدخل إسم المقرر" label="إسم المقرر"/>
           <InputElement field={titleTr} placeholder="أدخل الإسم بالإنجليزية" label="الإسم بالإنجليزية"/>
           <SelectElement field={facultyId} placeholder="إختر الكلية" label="الكلية"
-            options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}) ) } />
+            options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}))} />
           <SelectElement field={departmentId} placeholder="إختر القسم" label="القسم"
-            options={departments.map(d => Object.create({id: d.id, text: d.title, isActive: d.isActive}) ) } />
+            options={departments.filter(d => d.facultyId === this.props.values.facultyId)
+              .map(d => Object.create({id: d.id, text: d.title, isActive: d.isActive}))} />
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
               <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشط" />
