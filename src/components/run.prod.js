@@ -1,7 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
 import { createHistory, useBasename } from 'history'
-import { Router } from 'react-router'
+import { Router, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
 import { syncReduxAndRouter} from 'redux-simple-router'
 
@@ -15,13 +15,10 @@ const store = configureStore()
 isOnline(store)
 entityUpdateWorkerDispatch(store)
 
-const history = useBasename(createHistory)({ basename: '/' })
-syncReduxAndRouter(history, store)
-
 render(
   <Provider store={store}>
     <div>
-      <Router history={history} routes={RootRoute} />
+      <Router history={browserHistory} routes={RootRoute} />
     </div>
   </Provider>,
   document.getElementById('app')

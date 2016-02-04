@@ -1,0 +1,29 @@
+{
+  "name": "sisdn",
+  "description": "A frontend for Sisdn https://github.com/sisdn",
+  "main": "",
+  "authors": [
+    "Mohammed Hashim <mhashim dot gm at gmail dot com>"
+  ],
+  "license": "AGPL",
+  "keywords": [
+    "student",
+    "management",
+    "system",
+    "sudan",
+    "arabic"
+  ],
+  "homepage": "https://github.com/sisdn/frontend",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "keycloak": "~1.8.0"
+  }
+}

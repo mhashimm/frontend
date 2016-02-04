@@ -3,13 +3,16 @@ import { persistState } from 'redux-devtools'
 import createLogger from 'redux-logger'
 import thunk from 'redux-thunk'
 import rootReducer from './reducers';
+import { browserHistory } from 'react-router'
+import { syncHistory } from 'redux-simple-router'
 import DevTools from '../components/devTools';
 
 const logger = createLogger()
+const reduxRouterMiddleware = syncHistory(browserHistory)
 
 const finalCreateStore = compose(
   /* Middleware you want to use in development: */
-  applyMiddleware(thunk, logger),
+  applyMiddleware(thunk, reduxRouterMiddleware, logger),
   /* Required! Enable Redux DevTools with the monitors you chose */
   DevTools.instrument(),
   // Optional. Lets you write ?debug_session=<key> in address bar to persist debug sessions
@@ -32,6 +35,6 @@ export default function configureStore(initialState) {
       store.replaceReducer(require('./reducers')/*.default if you use Babel 6+ */)
     );
   }
-
+  reduxRouterMiddleware.listenForReplays(store)
   return store;
 }

@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react';
 import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
-import { pushPath } from 'redux-simple-router';
+import { routeActions } from 'redux-simple-router';
 
 import { createFaculty } from '../../../store/actions';
 import { createValidator, validateId } from '~/utils/validate';
@@ -23,17 +23,17 @@ class Create extends Component {
   handleSubmit(faculty) {
     const {dispatch} = this.props;
     dispatch(createFaculty(faculty));
-    dispatch(pushPath('/admin/faculties'));
+    dispatch(routeActions.push('/admin/faculties'));
   }
 }
 
-class CreateFacultyForm extends React.Component {
+class CreateFacultyForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,
     resetForm: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired
-  }
+  };
 
   render(){
     const {

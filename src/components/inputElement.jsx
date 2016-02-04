@@ -10,7 +10,7 @@ export default class InputElement extends Component {
     label: PropTypes.string.isRequired,
     help: PropTypes.string,
     placeholder: PropTypes.string
-  }
+  };
 
   render(){
     return(

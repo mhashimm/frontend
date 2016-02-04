@@ -14,7 +14,7 @@ export default class SelectElement extends Component {
       id: PropTypes.string.isRequired,
       text: PropTypes.string.isRequired
     })).isRequired
-  }
+  };
 
   render(){
     return(

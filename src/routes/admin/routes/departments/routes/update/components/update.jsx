@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { pushPath } from 'redux-simple-router'
+import { routeActions } from 'redux-simple-router'
 import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css')
@@ -29,7 +29,7 @@ class Update extends Component {
   handleSubmit(department){
     const {dispatch} = this.props
     dispatch(updateDepartment(department))
-    dispatch(pushPath('/admin/departments'))
+    dispatch(routeActions.push('/admin/departments'))
   }
 }
 
@@ -41,7 +41,7 @@ class UpdateDepartmentForm extends Component {
     resetForm: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     faculties: PropTypes.array.isRequired
-  }
+  };
 
   render(){
     const {
