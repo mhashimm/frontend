@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { routeActions } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css')
@@ -26,7 +26,7 @@ class Update extends Component {
       <div>
         <h3>تعديل المقرر</h3>
         <ReduxForm onSubmit={(e) => this.handleSubmit(e)} faculties={this.props.faculties}
-          departments={this.props.departments} switchValue={course.isActive} initialValues={{...course}}/>
+          departments={this.props.departments} initialValues={{...course}}/>
       </div>
     )
   }
@@ -73,7 +73,7 @@ class UpdateCourseForm extends Component {
               .map(d => Object.create({id: d.id, text: d.title, isActive: d.isActive}))} />
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
-              <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشط" />
+              <Switch className="" offText="لا" {...isActive} state={isActive.value} onText="نعم" labelText="نشط" />
             </div>
           </div>
           <TextElement field={remarks} label='ملحوظات'/>

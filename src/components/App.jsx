@@ -7,9 +7,8 @@ import * as actionCreators from '../stores/login/actions'
 require('../styles/style.css')
 
 class App extends Component {
-  constructor(props){
-    super(props)
-    props.actions.login()
+  componentWillMount(){
+    this.props.actions.login()
   }
 
   render() {

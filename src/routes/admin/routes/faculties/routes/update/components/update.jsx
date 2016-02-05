@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react';
 import { connect } from 'react-redux';
 import {reduxForm} from 'redux-form';
-import { routeActions } from 'redux-simple-router';
+import { routeActions } from 'react-router-redux';
 import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css');
@@ -18,7 +18,7 @@ class Update extends Component {
     return (
       <div>
         <h3>تعديل الكلية</h3>
-        <ReduxForm onSubmit={(e) => this.handleSubmit(e)} switchValue={faculty.isActive} initialValues={{...faculty}}/>
+        <ReduxForm onSubmit={(e) => this.handleSubmit(e)} initialValues={{...faculty}}/>
       </div>
     )
   }
@@ -56,7 +56,7 @@ class UpdateFacultyForm extends Component {
           <InputElement field={titleTr} placeholder="أدخل إسم الكلية بالإنجليزية" label="الإسم بالإنجليزية"/>
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
-              <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشطة" />
+              <Switch className="" offText="لا" {...isActive} state={isActive.value} onText="نعم" labelText="نشطة" />
             </div>
         </div>
         <br/>

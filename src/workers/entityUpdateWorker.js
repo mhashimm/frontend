@@ -106,8 +106,9 @@ const updateEntity = (entityTable, entity, ports, db) => {
           }, 5000)
       }
       else {
-         ports.forEach(p => p.postMessage({action: action, entity: _entity, status: FAILURE}))
-         current.put(Object.assign({}, _entity, {status: FAILURE, error: response.statusText}))
+        let _local = Object.assign({}, _entity, {status: FAILURE, error: response.statusText})
+        ports.forEach(p => p.postMessage({action: action, entity: _local, status: FAILURE}))
+        current.put(_local)
       }
     }
     ).catch(error => {

@@ -1,9 +1,7 @@
 import React from 'react'
 import { render } from 'react-dom'
-import { createHistory, useBasename } from 'history'
 import { Router, browserHistory } from 'react-router'
 import { Provider } from 'react-redux'
-import { syncReduxAndRouter} from 'redux-simple-router'
 
 import configureStore from '~/stores/configureStore'
 import isOnline from '~/stores/isOnline'

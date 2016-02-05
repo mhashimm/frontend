@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { routeActions } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 
 import { createDepartment } from '../../../store/actions'
 import { createValidator, validateId } from '~/utils/validate'
