@@ -6,6 +6,10 @@ const styles = {
   color: '#424242'
 }
 
+export const OnlineStatus = (props) => props.isOnline
+  ? <i className="fa fa-globe fa-2x text-primary"></i>
+  : <i className="fa fa-globe fa-2x" style={{color: '#9c9c9c'}}></i>
+
 export const SpinCog = (props) =>
   <i className="fa fa-times fa-spin fa-2x"
     style={Object.assign({}, {color: '#428BCA'}, props.style)}>

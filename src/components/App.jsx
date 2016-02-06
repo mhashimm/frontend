@@ -4,6 +4,7 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router'
 import Breadcrumbs from 'react-breadcrumbs'
 import Dashboard from './dashboard'
+import { OnlineStatus } from './elements'
 import * as actionCreators from '../stores/login/actions'
 
 require('../styles/style.css')
@@ -26,9 +27,7 @@ class App extends Component {
             </div>
           </div>
           <div className="col-xs-1 pull-left" style={{paddingTop: 10}}>
-            { this.props.isOnline ? <i className="fa fa-globe fa-2x text-primary"></i>
-              : <i className="fa fa-globe fa-2x" style={{color: '#9c9c9c'}}></i>
-            }
+            <OnlineStatus isOnline={this.props.isOnline}/>
           </div>
         </div>
         <div style={{paddingTop: 10, paddingBottom: 10}}>
