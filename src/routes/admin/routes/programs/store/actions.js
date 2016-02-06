@@ -5,48 +5,49 @@ import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import createDb from '~/actions/createDb'
-import { PENDING } from '~/stores/status'
+import { PENDING_IDLE } from '~/stores/status'
 
 export const PROGRAM_ADDED = 'PROGRAM_ADDED'
 export const PROGRAM_UPDATED = 'PROGRAM_UPDATED'
 export const PROGRAM_CANCELED = 'PROGRAM_CANCELED'
 export const PROGRAMS_LOADED = 'PROGRAMS_LOADED'
 
+var entityUpdateWorker = require('shared-worker!../../../../../workers/entityUpdateWorker')
+var entityWorker = new entityUpdateWorker()
+
 export function createProgram(program){
-  return function(dispatch, getState){
+  return function(dispatch){
     let entity = Object.assign({}, program, {
       isActive: true,
       terms: parseInt(program.terms, 10),
       creditHours: program.creditHours ? parseFloat(program.creditHours) : 0,
-      status: PENDING,
+      status: PENDING_IDLE,
       isNew: true
     })
+
     dispatch(programAdded(entity))
-    createEntity({
-      version: 1,
+
+    entityWorker.port.postMessage({
       path: config.programs.path,
       entity: entity,
-      username: getState().user.username,
       table: 'programs',
-      updateAction: (program) => (dispatch) => dispatch(programUpdated(program))
+      action: PROGRAM_UPDATED
     })
   }
 }
 
 export function updateProgram(program){
-  return function(dispatch, getState){
+  return function(){
     let entity = Object.assign({}, program, {
       terms: parseInt(program.terms, 10),
       creditHours: program.creditHours ? parseFloat(program.creditHours) : 0
     })
-    updateEntity({
-      version: 1,
+
+    entityWorker.port.postMessage({
       path: config.programs.path,
       entity: entity,
-      username: getState().user.username,
       table: 'programs',
-      origTable: 'programsOrig',
-      updateAction: (program) => (dispatch) => dispatch(programUpdated(program))
+      action: PROGRAM_UPDATED
     })
   }
 }
@@ -80,28 +81,28 @@ export function loadPrograms(){
 export function programsLoaded(programs){
   return {
     type: PROGRAMS_LOADED,
-    programs
+    entities: programs
   }
 }
 
 export function programAdded(program){
   return {
     type: PROGRAM_ADDED,
-    program
+    entity: program
   }
 }
 
 export function programUpdated(program){
   return{
     type: PROGRAM_UPDATED,
-    program
+    entity: program
   }
 }
 
 export function programCanceled(id, program){
   return{
     type: PROGRAM_CANCELED,
-    program,
+    entity: program,
     id
   }
 }

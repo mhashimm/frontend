@@ -4,10 +4,15 @@ global.onmessage = function getOrg(event) {
   setInterval(() => {
     global.fetch(config.url, {
       method: 'GET',
-      mode: config.cors
+      mode: config.cors,
+      headers: new Headers({
+        'pragma': 'no-cache',
+        'cache-control': 'no-cache'
+      })
     })
     .then(response => {
-      if(response.status == 200)
+      //TODO status "0" to handle local files fetching (e.g. Cordova/Phonegap etc.)
+      if(response.status === 200)
         postMessage(true)
       else postMessage(false)
       })

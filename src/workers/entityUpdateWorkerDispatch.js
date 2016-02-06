@@ -1,5 +1,7 @@
 import config from 'config'
 
+let actionMap = new Map()
+
 export default function entityUpdateWorkerDispatch(store){
   var entityUpdateWorker = require('shared-worker!./entityUpdateWorker')
   var entityWorker = new entityUpdateWorker()
@@ -7,8 +9,10 @@ export default function entityUpdateWorkerDispatch(store){
   userScope(store, entityWorker)
 
   entityWorker.port.onmessage = function(message){
-    //store.dispatch({type: 'IS_ONLINE', online: false})
-    console.log(message.data)
+    if(message.data.hasOwnProperty('action') && message.data.hasOwnProperty('entity')){
+      const {entity, action, status} = message.data
+      store.dispatch({type: action, entity: Object.assign({}, entity, {status: status})})
+    }
   }
 
   entityWorker.port.onerror = function(error){
@@ -19,7 +23,6 @@ export default function entityUpdateWorkerDispatch(store){
     type: 'entityUpdateWorkerDispatch',
     isOnline: store.getState().isOnline
   })
-  //entityWorker.port.start()
 }
 
 const userScope = (store, entityWorker) => {
@@ -33,8 +36,23 @@ const userScope = (store, entityWorker) => {
           case 'admin':
             entityWorker.port.postMessage({
               table: 'faculties',
-              version: 1,
-              path: config.faculties
+              path: config.faculties.path,
+              action: 'FACULTY_UPDATED'
+            })
+            entityWorker.port.postMessage({
+              table: 'departments',
+              path: config.departments.path,
+              action: 'DEPARTMENT_UPDATED'
+            })
+            entityWorker.port.postMessage({
+              table: 'courses',
+              path: config.courses.path,
+              action: 'COURSE_UPDATED'
+            })
+            entityWorker.port.postMessage({
+              table: 'programs',
+              path: config.programs.path,
+              action: 'PROGRAM_UPDATED'
             })
             break;
         }
