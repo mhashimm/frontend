@@ -11,19 +11,11 @@ export const SpinCog = (props) =>
     style={Object.assign({}, {color: '#428BCA'}, props.style)}>
   </i>
 
-export const IconBool = (props) => {
-  if(props.value)
-    return (<i className='fa fa-check fa-2x' style={styles}></i>);
-  else
-    return (<i className='fa fa-times fa-2x' style={styles}></i>)
-}
+export const IconBool = (props) => props.value
+  ? <i className='fa fa-check fa-2x' style={styles}></i>
+  : <i className='fa fa-times fa-2x' style={styles}></i>
 
-export const TextBool = (props) => {
-  if(props.value)
-    return (<span>نعم</span>);
-  else
-    return (<span>لا</span>)
-}
+export const TextBool = (props) => props.value ? <span>نعم</span> : <span>لا</span>
 
 export const UpdateLink = (props) =>
   <Link to={props.url} style={props.style} onClick={e => {if(props.disabled) e.preventDefault()}}>

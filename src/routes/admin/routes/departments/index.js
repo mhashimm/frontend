@@ -1,5 +1,6 @@
 module.exports = {
   path: 'departments',
+  name: 'الأقسام',
 
   getChildRoutes(location, cb) {
     require.ensure([], (require) => {

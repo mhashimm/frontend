@@ -1,5 +1,6 @@
 module.exports = {
   path: 'admin',
+  name: 'الإعدادات',
 
   getChildRoutes(location, cb) {
     require.ensure([], (require) => {
