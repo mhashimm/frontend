@@ -137,10 +137,26 @@ h6 small,
   fill: #9C9C9C;
 }
 
-.logo:hover svg {
-  fill: #202020;
+.logo:hover #logo-top {
+  fill:#BD0000;
 }
 
-.logo:hover .line{
+.logo:hover #logo-bottom {
+  fill: black;
+}
+
+.logo:hover #logo-middle {
+  fill: white;
+}
+
+.logo:hover #logo-tip,.logo:hover #logo-polygon {
   fill: green;
+}
+
+.logo:hover #logo-line {
+  fill: black;
+}
+
+#logo-circle {
+  fill: white;
 }
