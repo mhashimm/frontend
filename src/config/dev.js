@@ -12,7 +12,8 @@ let config = {
     clientId: 'sisdn',
     redirect_uri: 'http://localhost:8000',
     flow: 'standard',
-    'enable-cors': true
+    'enable-cors': true,
+    scope: 'offline_access'
   }
 };
 

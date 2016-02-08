@@ -3,15 +3,17 @@ import { connect } from 'react-redux'
 import { bindActionCreators } from 'redux'
 import { Link } from 'react-router'
 import Breadcrumbs from 'react-breadcrumbs'
+import { routeActions } from 'react-router-redux'
 import Dashboard from './dashboard'
 import { OnlineStatus } from './elements'
-import * as actionCreators from '../stores/login/actions'
 
+require('offline-plugin/runtime').install()
 require('../styles/style.css')
 
 class App extends Component {
   componentWillMount(){
-    this.props.actions.login()
+    if(!this.props.user.authenticated)
+      this.props.actions.push('/login')
   }
 
   render() {
@@ -33,7 +35,9 @@ class App extends Component {
         <div style={{paddingTop: 10, paddingBottom: 10}}>
           <Breadcrumbs routes={this.props.routes} params={this.props.params}/>
         </div>
-        { this.props.children || <Dashboard /> }
+        {
+          this.props.children || <Dashboard/>
+        }
       </div>
     );
   }
@@ -44,5 +48,5 @@ module.exports = connect(
     isOnline: state.isOnline,
     user: state.user
   }),
-  dispatch => ({ actions: bindActionCreators(actionCreators, dispatch) })
+  dispatch => ({ actions: bindActionCreators(routeActions, dispatch) })
 )(App)

@@ -49,24 +49,24 @@ export function tokenFailed(error){
 export function login(){
   return function(dispatch){
     dispatch(beginLogin())
-    var keycloak = new  keycloakConf(config.keycloak)
-    if(config.appEnv === 'dist'){
-      keycloak.init({
-        onLoad: 'login-required',
-        checkLoginIframe: false
-      }).success(authenticated => {
-          if(!authenticated)
-            dispatch(loginFailure())
-          else {
-            global.keycloak = keycloak
-            dispatch(loginSuccess())
-          }
-        }).error(error => dispatch(loginFailure(error)))
+    var keycloak = new keycloakConf(config.keycloak)
+    keycloak.init({
+      onLoad: 'check-sso',
+      checkLoginIframe: false
+    }).success(authenticated => {
+        if(!authenticated){
+          keycloak.login({scope: 'offline_access'})
+          .success(authenticated => {console.log('CCCCCCCCCCCCCCCC');console.log(authenticated)})
+          .error(error => dispatch(loginFailure(error)))
+        }
+        else {
+          global.keycloak = keycloak
+          dispatch(loginSuccess())
+        }
+      })
 
-      keycloak.onTokenExpired = () => keycloak.updateToken()
-        .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
-        .error(error => dispatch(loginFailure(error)))
-    }
-   else dispatch(loginSuccess())
+    keycloak.onTokenExpired = () => keycloak.updateToken()
+      .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
+      .error(error => dispatch(loginFailure(error)))
   }
 }

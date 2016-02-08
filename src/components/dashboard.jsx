@@ -3,38 +3,21 @@ import React, { Component } from 'react'
 import { Link } from 'react-router'
 import { connect } from 'react-redux'
 
-import { login } from '../stores/login/actions'
 
 class Dashboard extends Component {
   render() {
-    if(this.props.user.authenticated){
-      return(
-          <div className="row">
-            <TeacherPort active={this.props.user.groups.indexOf('professor') >= 0 ||
-                  this.props.user.groups.indexOf('assistant-professor') >= 0} />
-            <AdminPort active={this.props.user.groups.indexOf('admin') >= 0}/>
-            <RegistrationPort active={this.props.user.groups.indexOf('registrar') >= 0 ||
-                  this.props.user.groups.indexOf('assistant-registrar') >= 0} />
-            <AdmissionPort active={this.props.user.groups.indexOf('admission') >= 0} />
-            <ReportsPort active={this.props.user.groups.indexOf('report') >= 0} />
-          </div>
-        )
-      }
-    else if(this.props.user.pending)
-      return(
-        <div className="col-xs-6 col-sm-4 col-md-2 vertical-center">
-          <img src={require('../images/gears.svg')}></img>
-        </div>
+    return(
+      <div className="row">
+        <TeacherPort active={this.props.user.groups.indexOf('professor') >= 0 ||
+              this.props.user.groups.indexOf('assistant-professor') >= 0} />
+        <AdminPort active={this.props.user.groups.indexOf('admin') >= 0}/>
+        <RegistrationPort active={this.props.user.groups.indexOf('registrar') >= 0 ||
+              this.props.user.groups.indexOf('assistant-registrar') >= 0} />
+        <AdmissionPort active={this.props.user.groups.indexOf('admission') >= 0} />
+        <ReportsPort active={this.props.user.groups.indexOf('report') >= 0} />
+      </div>
       )
-    else
-      return(
-        <div className="vertical-center row">
-          <h3 className="col-xs-12">تعذر تسجيل الدخول. إضغط للمحاولة مرةً أٌخرى</h3>
-          <button className="btn btn-primary btn-block"
-            onClick={() => this.props.dispatch(login())}>دخول</button>
-        </div>
-      )
-  }
+    }
 }
 
 var TeacherPortBackground = () =>

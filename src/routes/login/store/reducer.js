@@ -1,12 +1,12 @@
 import config from 'config'
 import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, TOKEN_FAILURE, TOKEN_SUCCESS } from './actions'
 
-var entityUpdateWorker = require('shared-worker!../../workers/entityUpdateWorker.js')
+var entityUpdateWorker = require('shared-worker!../../../workers/entityUpdateWorker.js')
 const entityWorker = new entityUpdateWorker()
-var orgWorker = require('worker!../../workers/orgWorker.js')
+var orgWorker = require('worker!../../../workers/orgWorker.js')
 const worker = new orgWorker()
 
-export function loginReducer(state = {authenticated: false, pending: true}, action){
+export function reducer(state = {authenticated: false, pending: true, groups: []}, action){
   switch (action.type) {
     case BEGIN_LOGIN:
       return Object.assign({}, state, {authenticated: false, pending: true})
@@ -29,21 +29,10 @@ export function loginReducer(state = {authenticated: false, pending: true}, acti
 }
 
 function parseToken(){
-  // //TODO this is not the way to go
-  if(config.appEnv === 'dist') // || config.appEnv === 'dev')
     return {
       groups: global.keycloak.tokenParsed.groups.slice(),
       username: global.keycloak.tokenParsed.username,
       departments: global.keycloak.tokenParsed.departments.slice(),
       token: global.keycloak.token
-  }
-  else{
-    global.keycloak = { token: 'TOKEN'}
-    return{
-      username: 'FAKE_USER',
-      departments: ['math', 'bio'],
-      token: '',
-      groups: ['admin', 'dean', 'professor', 'report', 'admitter']
-    }
   }
 }

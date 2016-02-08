@@ -1,5 +1,6 @@
 'use strict';
 
+const userSchema = {name: 'users', schema: 'username, name, orgId, orgName, groups, token'}
 const facultySchema = {name: 'faculties', schema: 'id, title, titleTr, isActive, status, ts'}
 const departmentSchema = {name: 'departments', schema: 'id, title, titleTr, isActive, status, ts'}
 const courseSchema = {name: 'courses', schema: 'id, title, titleTr, facultyId, departmentId, remarks, isActive, status, ts'}

@@ -30,7 +30,7 @@ class Create extends Component {
   }
 }
 
-class CreateCourseForm extends React.Component {
+class CreateCourseForm extends Component {
   static propTypes = {
     fields: PropTypes.object.isRequired,
     handleSubmit: PropTypes.func.isRequired,

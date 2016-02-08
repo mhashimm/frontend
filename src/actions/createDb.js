@@ -4,7 +4,7 @@ import config from 'config'
 export default function createDb(user){
   const version = config.db.version
   var db = new Dexie(user.username + '@sisdn-' + version)
-  let stores = {}
+  let stores = {users: 'username, password, name, orgId, orgName, groups, token'}
 
   if(user.groups.indexOf('admin') > -1){
     for(let tbl of config.admin.db){
@@ -12,7 +12,7 @@ export default function createDb(user){
       Object.assign(stores, {[tbl.name + 'Orig']: tbl.schema})
     }
   }
-  
+
   db.version(version).stores(stores)
   return db
 }
