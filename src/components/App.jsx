@@ -4,15 +4,16 @@ import { bindActionCreators } from 'redux'
 import { Link } from 'react-router'
 import Breadcrumbs from 'react-breadcrumbs'
 import Dashboard from './dashboard'
+import Login from './login'
 import { OnlineStatus } from './elements'
 import * as actionCreators from '../stores/login/actions'
 
 require('../styles/style.css')
 
 class App extends Component {
-  componentWillMount(){
-    this.props.actions.login()
-  }
+  // componentWillMount(){
+  //   this.props.actions.login()
+  // }
 
   render() {
     return (
@@ -33,7 +34,7 @@ class App extends Component {
         <div style={{paddingTop: 10, paddingBottom: 10}}>
           <Breadcrumbs routes={this.props.routes} params={this.props.params}/>
         </div>
-        { this.props.children || <Dashboard /> }
+        { this.props.user.authenticated ? this.props.children || <Dashboard /> : <Login/> }
       </div>
     );
   }

@@ -20,8 +20,7 @@ export default class InputElement extends Component {
           (<div className="form-group has-error">
             <label className="col-md-2 control-label text-danger">{this.props.label}</label>
             <div className="col-md-7">
-              <input className="form-control" type="text" {...this.props.field}
-                placeholder={this.props.placeholder}
+              <input className="form-control" {...this.props.field} type={!!this.props.type ? this.props.type : 'text'}
                 aria-describedby={this.props.field.name + '-help-block'}></input>
               <span id={this.props.field.name + '-help-block'} style={helpStyle} className="help-block">{this.props.help}</span>
             </div>
@@ -32,12 +31,12 @@ export default class InputElement extends Component {
             <label className="col-md-2 control-label">{this.props.label}</label>
             <div className="col-md-10">
               {this.props.isReadOnly ?
-                <input className="form-control" readOnly type="text" {...this.props.field}
-                  placeholder={this.props.placeholder}
+                <input className="form-control" readOnly type={!!this.props.type ? this.props.type : 'text'}
+                  {...this.props.field} placeholder={this.props.placeholder}
                   aria-describedby={this.props.field.name + '-help-block'}></input>
                 :
-                <input className="form-control" type="text" {...this.props.field}
-                  placeholder={this.props.placeholder}
+                <input className="form-control" type={!!this.props.type ? this.props.type : 'text'}
+                  {...this.props.field} placeholder={this.props.placeholder}
                   aria-describedby={this.props.field.name + '-help-block'}></input>
               }
               <span id={this.props.field.name + '-help-block'} style={helpStyle} className="help-block">{this.props.help}</span>

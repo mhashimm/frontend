@@ -1,4 +1,5 @@
 import config from 'config'
+import createDb from '~/actions/createDb'
 const keycloakConf = require('keycloak')
 
 export const BEGIN_LOGIN = 'BEGIN_LOGIN'
@@ -9,9 +10,10 @@ export function beginLogin(){
 }
 
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS'
-export function loginSuccess(){
+export function loginSuccess(user){
   return {
-    type: LOGIN_SUCCESS
+    type: LOGIN_SUCCESS,
+    user
   }
 }
 
@@ -46,20 +48,29 @@ export function tokenFailed(error){
   }
 }
 
-export function login(){
+export function login(user){
   return function(dispatch){
     dispatch(beginLogin())
     var keycloak = new  keycloakConf(config.keycloak)
+    keycloak.onAuthSuccess = function() { console.log('BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB'); }
+
     if(config.appEnv === 'dist'){
       keycloak.init({
-        onLoad: 'login-required',
-        checkLoginIframe: false
+        onLoad: 'check-sso',
+        checkLoginIframe: true
       }).success(authenticated => {
-          if(!authenticated)
+          if(!authenticated) {
+            keycloak.login()
             dispatch(loginFailure())
+          }
           else {
-            global.keycloak = keycloak
-            dispatch(loginSuccess())
+            dispatch(loginSuccess({
+            	groups: keycloak.tokenParsed.groups.slice(),
+            	username: keycloak.tokenParsed.username,
+            	departments: keycloak.tokenParsed.departments.slice(),
+            	token: keycloak.token,
+              refreshToken: keycloak.refreshToken
+          	}))
           }
         }).error(error => dispatch(loginFailure(error)))
 
