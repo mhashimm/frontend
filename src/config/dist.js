@@ -7,12 +7,12 @@ let config = {
   appEnv: 'dist',
   apiUrl: 'http://localhost:8888/api',
   keycloak: {
-    url: 'http://localhost:8080/auth',
+    url: 'http://localhost:8080',
     realm: 'sisdn-realm',
     clientId: 'sisdn',
-    redirect_uri: 'http://localhost:8000',
+    redirect_uri: 'http://localhost:8000/login',
     flow: 'standard',
-    scope: 'offline_access'
+    //'enable-cors': true
   }
 };
 

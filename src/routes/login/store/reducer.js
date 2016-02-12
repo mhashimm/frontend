@@ -1,4 +1,3 @@
-import config from 'config'
 import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, TOKEN_FAILURE, TOKEN_SUCCESS } from './actions'
 
 var entityUpdateWorker = require('shared-worker!../../../workers/entityUpdateWorker.js')
@@ -11,10 +10,9 @@ export function reducer(state = {authenticated: false, pending: true, groups: []
     case BEGIN_LOGIN:
       return Object.assign({}, state, {authenticated: false, pending: true})
     case LOGIN_SUCCESS:
-      const user = parseToken()
-      entityWorker.port.postMessage({...user})
-      worker.postMessage({user: user})
-      return Object.assign({}, state, user, { authenticated: true, pending: false})
+      entityWorker.port.postMessage({...[action.user]})
+      worker.postMessage({user: action.user})
+      return Object.assign({}, state, action.user, { authenticated: true, pending: false})
     case LOGIN_FAILURE:
       return Object.assign({}, state, {authenticated: false, pending: false})
     case TOKEN_SUCCESS:
@@ -25,14 +23,5 @@ export function reducer(state = {authenticated: false, pending: true, groups: []
       return Object.assign({}, state, {token: ''})
     default:
       return state
-  }
-}
-
-function parseToken(){
-    return {
-      groups: global.keycloak.tokenParsed.groups.slice(),
-      username: global.keycloak.tokenParsed.username,
-      departments: global.keycloak.tokenParsed.departments.slice(),
-      token: global.keycloak.token
   }
 }

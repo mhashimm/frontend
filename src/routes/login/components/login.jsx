@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux'
 import { reduxForm } from 'redux-form'
 
 import { createValidator } from '~/utils/validate'
-import loginValidator from '../validation'
+import loginValidator, {validatePassword} from '../validation'
 import * as actionCreators from '../store/actions'
 import InputElement from '~/components/inputElement'
 import * as elements from '~/components/elements'
@@ -29,7 +29,7 @@ class Login extends Component {
   }
 
   handleSubmit(e){
-    console.log(e)
+    this.props.actions.login(e)
   }
 }
 
@@ -44,7 +44,6 @@ class LoginForm extends Component {
   render(){
     const {
       fields: {username, password, passwordConfirm, isNew},
-      error,
       handleSubmit,
       resetForm,
       submitting
@@ -53,9 +52,9 @@ class LoginForm extends Component {
     return (
       <form onSubmit={handleSubmit} className="form-horizontal">
         <InputElement field={username} placeholder="أدخل إسم المستخدم" label="الإسم"/>
-        <InputElement field={password} type='password' placeholder="أدخل كلمة السر" label="كلمة السر"/>
+        <InputElement field={password} type='password' placeholder="أدخل كلمة المرور" label="كلمة المرور"/>
         { isNew.value ?
-          <InputElement field={passwordConfirm} type='password' placeholder="أدخل كلمة السر مرة إخرى" label="تأكيد كلمة السر"/>
+          <InputElement field={passwordConfirm} type='password' placeholder="أدخل كلمةالمرور مرة إخرى" label="تأكيد كلمة المرور"/>
           : null
         }
         <div className="form-group">
@@ -66,7 +65,8 @@ class LoginForm extends Component {
         <div className="form-group">
           <div className="col-md-12 col-md-offset-2">
             <elements.ResetButton disabled={submitting} onClick={resetForm} text="إسترجاع"/>
-            <elements.SubmitButton disabled={submitting} onClick={handleSubmit} text="حفظ" style={{marginRight: 10}}/>
+            <elements.SubmitButton disabled={submitting} onClick={handleSubmit} text={isNew.value ? 'تسجيل' : 'دخول'}
+              style={{marginRight: 10}}/>
           </div>
         </div>
       </form>
@@ -77,6 +77,8 @@ class LoginForm extends Component {
 let ReduxForm = reduxForm({
   form: 'LoginForm',
   fields: ['username', 'password', 'passwordConfirm', 'isNew'],
+  asyncValidate: validatePassword,
+  asyncBlurFields: ['username', 'passwordConfirm'],
   validate: createValidator(loginValidator)
   }
 )(LoginForm);

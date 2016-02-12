@@ -5,16 +5,17 @@ import { Link } from 'react-router'
 import Breadcrumbs from 'react-breadcrumbs'
 import { routeActions } from 'react-router-redux'
 import Dashboard from './dashboard'
+import Login from '../routes/login/components/login'
 import { OnlineStatus } from './elements'
 
 require('offline-plugin/runtime').install()
 require('../styles/style.css')
 
 class App extends Component {
-  componentWillMount(){
-    if(!this.props.user.authenticated)
-      this.props.actions.push('/login')
-  }
+  // componentWillMount(){
+  //   if(!this.props.user.authenticated)
+  //     this.props.actions.push('/login')
+  // }
 
   render() {
     return (
@@ -35,8 +36,7 @@ class App extends Component {
         <div style={{paddingTop: 10, paddingBottom: 10}}>
           <Breadcrumbs routes={this.props.routes} params={this.props.params}/>
         </div>
-        {
-          this.props.children || <Dashboard/>
+        { this.props.user.authenticated ? this.props.children || <Dashboard/> : <Login/>
         }
       </div>
     );
