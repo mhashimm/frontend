@@ -49,7 +49,7 @@ export function tokenFailed(error){
 }
 
 export function login(user){
-  return function(dispatch){
+  return function(dispatch, getState){
     dispatch(beginLogin())
 
     var keycloak = new  keycloakConf(config.keycloak)
@@ -58,48 +58,92 @@ export function login(user){
       .success(refreshed => refreshed
         ? dispatch(tokenRefreshed(global.keycloak.token))
         : dispatch(tokenFailed()))
-      .error(error => dispatch(loginFailure(error)))
+      .error(error => dispatch(tokenFailed()))
 
-    var db = new Dexie('users')
+    var db = new Dexie('usersdb')
     db.version(config.db.version).stores({users: 'username, password, name, orgId, orgName, groups'})
     db.open()
 
     db.users.get(user.username).then(u => {
-      if(!!u && u.password === user.password){
+      if(!!u && u.password === user.password && !!u.offline_token){
         //login locally
-        console.log('LOGGED IN LOCALLY');
-      }
-      else {
-        //login remotely
-        loginRemote(user).then(response => {
-          keycloak.init({
-            //token: response.access_token,
-            refreshToken: response.refresh_token,
-            //idToken: response.id_token,
-            onLoad: 'login-required',
-            checkLoginIframe: false
-          })
-          .success(authenticated => {
-            if(!authenticated)
-              dispatch(loginFailure())
-            else {
-              const remoteUser = keycloak.tokenParsed
-              console.log(keycloak);
+        if(getState().isOnline){
+          getAccessToken(u.offline_token).then(response =>{
+            keycloak.init({
+              token: response.access_token,
+              refreshToken: response.refresh_token,
+              idToken: response.id_token,
+              onLoad: 'login-required',
+              checkLoginIframe: false
+            })
+            .success(authenticated => {
+              if(!authenticated)
+                dispatch(loginFailure())
+              else {
+                const remoteUser = keycloak.tokenParsed
+
+                dispatch(loginSuccess({
+                  groups: remoteUser.groups.slice(),
+                  username: remoteUser.username,
+                  //TODO departments: remoteUser.departments.slice(),
+                  token: keycloak.token
+              }))
+
               db.users.add({
                 username: remoteUser.username,
                 password: user.password, //TODO hash password before storing it
                 name: remoteUser.name,
                 orgId: remoteUser.orgId,
                 orgName: remoteUser.orgName,
-                groups: remoteUser.groups.slice()
+                groups: remoteUser.groups.slice(),
+                offline_token: keycloak.refreshToken
               });
+              }
+            }).error(error => dispatch(loginFailure(error)))
+          })
+        }
+        else {
+          dispatch(loginSuccess({
+            groups: u.groups.slice(),
+            username: u.username,
+            //TODO departments: u.departments.slice(),
+            token: undefined
+          }))
+        }
+      }
+      else {
+        //login remotely
+        getOfflineToken(user).then(response => {
+          keycloak.init({
+            token: response.access_token,
+            refreshToken: response.refresh_token,
+            idToken: response.id_token,
+            //onLoad: 'login-required',
+            checkLoginIframe: false
+          })
+          .success(authenticated => {console.log('AAAAAAAAAAAAAAAAAA');console.log(keycloak);
+            if(!authenticated)
+              dispatch(loginFailure())
+            else {
+              const remoteUser = keycloak.tokenParsed
 
               dispatch(loginSuccess({
                 groups: remoteUser.groups.slice(),
                 username: remoteUser.username,
-                departments: remoteUser.departments.slice(),
+                //TODO departments: remoteUser.departments.slice(),
                 token: keycloak.token
-            }))
+              }))
+
+              db.users.add({
+                username: remoteUser.username,
+                password: user.password, //TODO hash password before storing it
+                name: remoteUser.name,
+                orgId: remoteUser.orgId,
+                orgName: remoteUser.orgName,
+                groups: remoteUser.groups.slice(),
+                offline_token: keycloak.refreshToken
+              });
+
             }
           }).error(error => dispatch(loginFailure(error)))
         })
@@ -108,8 +152,27 @@ export function login(user){
   }
 }
 
-function loginRemote(user){
-    const k_url = config.keycloak.url + '/auth/realms/sisdn-realm/protocol/openid-connect/token'
+function getAccessToken(token){
+  const k_url = config.keycloak.url + '/realms/sisdn-realm/protocol/openid-connect/token'
+
+  return fetch(k_url, {
+    method: 'POST',
+    body: `client_id=sisdn&grant_type=refresh_token&refresh_token=${token}`,
+    headers: new Headers({
+      'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
+    })
+  }).then(response => {
+    if(response.status == 200){
+      return response.json()
+    }
+    else {
+      console.error(response.statusText);
+    }
+  })
+}
+
+function getOfflineToken(user){
+    const k_url = config.keycloak.url + '/realms/sisdn-realm/protocol/openid-connect/token'
 
     return fetch(k_url, {
       method: 'POST',
@@ -127,97 +190,3 @@ function loginRemote(user){
       }
     })
 }
-
-
-// export function login(user){
-//   return function(dispatch){
-//     dispatch(beginLogin())
-//     var keycloak = new  keycloakConf(config.keycloak)
-//     if(config.appEnv === 'dist'){
-//       keycloak.init({
-//         onLoad: 'login-required',
-//         checkLoginIframe: true
-//       }).success(authenticated => {
-//           if(!authenticated)
-//             dispatch(loginFailure())
-//           else {
-//             dispatch(loginSuccess({
-//               groups: keycloak.tokenParsed.groups.slice(),
-//               username: keycloak.tokenParsed.username,
-//               departments: keycloak.tokenParsed.departments.slice(),
-//               token: keycloak.token
-//           }))
-//           }
-//         }).error(error => dispatch(loginFailure(error)))
-//
-//       keycloak.onTokenExpired = () => keycloak.updateToken()
-//         .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
-//         .error(error => dispatch(loginFailure(error)))
-//     }
-//    else dispatch(loginSuccess())
-//   }
-// }
-
-// export function login(user){
-//   return function(dispatch){
-//     dispatch(beginLogin())
-//     keycloak = new keycloakConf(config.keycloak)
-//     var db = createDb(user)
-//     db.open()
-//
-//       keycloak.init({onLoad: 'login-required',  checkLoginIframe: true})
-//       .success(authenticated => {
-//         if(authenticated){
-//
-//           alert(keycloak.refreshToken)
-//         }
-//       })
-//
-//
-//     }
-//   }
-
-              // db.user.put({
-              //   username: keycloak.tokenParsed.username,
-              //   password: user.password,
-              //   name: keycloak.tokenParsed.name,
-              //   orgId: keycloak.tokenParsed.org,
-              //   orgName: keycloak.tokenParsed.orgName,
-              //   groups: keycloak.tokenParsed.groups.slice(),
-              //   token: keycloak.refreshToken
-              // })
-
-        //})
-
-    // keycloak.init({
-    //   onLoad: 'check-sso',
-    //   checkLoginIframe: true
-    // }).success(authenticated => {
-    //     if(!authenticated){
-    //       keycloak.login({scope: 'offline_access'})
-    //       .success(authenticated => {
-    //         let db = createDb({username: keycloak.tokenParsed.username})
-    //         db.open()
-    //         db.users.add({
-    //           username: keycloak.tokenParsed.username,
-    //           password: user.password,
-    //           name: keycloak.tokenParsed.name,
-    //           orgId: keycloak.tokenParsed.org,
-    //           orgName: keycloak.tokenParsed.orgName,
-    //           groups: keycloak.tokenParsed.groups.slice(),
-    //           token: keycloak.refreshToken
-    //         }).catch((error) => console.error('Dexie Error'))
-    //       })
-    //       .error(error => console.error('DDDDDDDDDDDDDDDDDDDDDDDDDDDD'))
-    //     }
-    //     else {console.log('authenticated');
-    //       global.keycloak = keycloak
-    //       dispatch(loginSuccess())
-    //     }
-    //   })
-    //
-    // keycloak.onTokenExpired = () => keycloak.updateToken()
-    //   .success(refreshed => refreshed ? dispatch(tokenRefreshed(global.keycloak.token)) : dispatch(tokenFailed()))
-    //   .error(error => dispatch(loginFailure(error)))
-//   }
-// }

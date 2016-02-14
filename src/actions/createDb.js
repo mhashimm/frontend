@@ -11,7 +11,7 @@ export default function createDb(user){
       Object.assign(stores, {[tbl.name]: tbl.schema}, {[tbl.name + 'Orig']: tbl.schema})
     }
   }
-  console.log(user);
+
   db.version(version).stores(stores)
   return db
 }
