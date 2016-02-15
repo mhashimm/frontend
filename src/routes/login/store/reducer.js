@@ -1,4 +1,4 @@
-import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, TOKEN_FAILURE, TOKEN_SUCCESS } from './actions'
+import { BEGIN_LOGIN, LOGIN_SUCCESS, LOGIN_FAILURE, TOKEN_FAILURE, TOKEN_SUCCESS, LOGOUT } from './actions'
 
 var entityUpdateWorker = require('shared-worker!../../../workers/entityUpdateWorker.js')
 const entityWorker = new entityUpdateWorker()
@@ -21,6 +21,8 @@ export function reducer(state = {authenticated: false, pending: true, groups: []
     case TOKEN_FAILURE:
       entityWorker.port.postMessage({token: undefined})
       return Object.assign({}, state, {token: ''})
+    case LOGOUT:
+      return Object.create({authenticated: false, pending: true, groups: []})
     default:
       return state
   }

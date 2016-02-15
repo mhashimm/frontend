@@ -11,8 +11,7 @@ let config = {
     realm: 'sisdn-realm',
     clientId: 'sisdn',
     redirect_uri: 'http://localhost:8000/login',
-    flow: 'standard',
-    'enable-cors': true
+    flow: 'standard'
   }
 };
 

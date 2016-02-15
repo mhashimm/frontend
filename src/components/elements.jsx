@@ -1,9 +1,29 @@
 import React from 'react'
-import {Link} from 'react-router'
+import { Link } from 'react-router'
 
 require('font-awesome-webpack')
 const styles = {
   color: '#424242'
+}
+
+export const LoginStatus = (props) => {
+  if(props.user.authenticated && !!props.user.token)
+    return(
+      <a href="/logout" onClick={e => {e.preventDefault(); props.handleLogout()}}
+        className="icon-link" style={{outline: 'none'}}>
+        <i className="fa fa-unlock fa-2x text-primary"></i>
+      </a>
+    )
+  else if(props.user.authenticated && !props.user.token)
+    return(
+      <a href="/logout" onClick={e => {e.preventDefault(); props.handleLogout()}}
+        className="icon-link" style={{outline: 'none'}}>
+        <i className="fa fa-unlock fa-2x" style={{color: '#9c9c9c'}}></i>
+      </a>
+    )
+  else {
+    return(<i className="fa fa-lock fa-2x" style={{color: '#9c9c9c'}}></i>)
+  }
 }
 
 export const OnlineStatus = (props) => props.isOnline

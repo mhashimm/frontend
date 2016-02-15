@@ -5,18 +5,14 @@ import { Link } from 'react-router'
 import Breadcrumbs from 'react-breadcrumbs'
 import { routeActions } from 'react-router-redux'
 import Dashboard from './dashboard'
-import Login from '../routes/login/components/login'
-import { OnlineStatus } from './elements'
+import Login from '~/routes/login/components/login'
+import { OnlineStatus, LoginStatus } from './elements'
+import  * as loginActions  from '~/routes/login/store/actions'
 
 require('offline-plugin/runtime').install()
 require('../styles/style.css')
 
 class App extends Component {
-  // componentWillMount(){
-  //   if(!this.props.user.authenticated)
-  //     this.props.actions.push('/login')
-  // }
-
   render() {
     return (
       <div className='container'>
@@ -30,7 +26,14 @@ class App extends Component {
             </div>
           </div>
           <div className="col-xs-1 pull-left" style={{paddingTop: 10}}>
-            <OnlineStatus isOnline={this.props.isOnline}/>
+            <div className="row">
+              <div className="col-xs-6">
+                <LoginStatus user={this.props.user} handleLogout={this.props.loginActions.logout}/>
+              </div>
+              <div className="col-xs-6">
+                <OnlineStatus isOnline={this.props.isOnline}/>
+              </div>
+            </div>
           </div>
         </div>
         <div style={{paddingTop: 10, paddingBottom: 10}}>
@@ -48,5 +51,8 @@ module.exports = connect(
     isOnline: state.isOnline,
     user: state.user
   }),
-  dispatch => ({ actions: bindActionCreators(routeActions, dispatch) })
+  dispatch => ({
+    actions: bindActionCreators(routeActions, dispatch),
+    loginActions: bindActionCreators(loginActions, dispatch)
+  })
 )(App)
