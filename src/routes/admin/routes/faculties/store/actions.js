@@ -57,9 +57,7 @@ export function loadFaculties(){
     db.open()
     db.faculties.toArray(function(_faculties) {
        dispatch(facultiesLoaded(_faculties))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 

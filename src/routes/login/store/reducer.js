@@ -10,7 +10,7 @@ export function reducer(state = {authenticated: false, pending: true, groups: []
     case BEGIN_LOGIN:
       return Object.assign({}, state, {authenticated: false, pending: true})
     case LOGIN_SUCCESS:
-      entityWorker.port.postMessage({...[action.user]})
+      entityWorker.port.postMessage(...[action.user])
       worker.postMessage({user: action.user})
       return Object.assign({}, state, action.user, { authenticated: true, pending: false})
     case LOGIN_FAILURE:

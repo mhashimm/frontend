@@ -13,9 +13,10 @@ global.onconnect = (event) => {
   var port = event.ports[0]
 
   port.onmessage = (e) => {
+
     if(e.data instanceof Object){
       if(e.data.hasOwnProperty('username')){
-        user = Object.assign({}, user, {...e.data})
+        user = Object.assign({}, user, ...[e.data])
       }
       else if(e.data.hasOwnProperty('token')){
         user = Object.assign({}, user, e.data)
@@ -30,7 +31,7 @@ global.onconnect = (event) => {
         if(user !== undefined){
           let db = createDb(user)
           db.open()
-          updateEntity({...e.data}, e.data.entity, ports, db)
+          updateEntity({...e.data}, e.data.entity, db)
         }
       }
       else if(e.data.hasOwnProperty('table') &&
@@ -39,7 +40,7 @@ global.onconnect = (event) => {
         entityTables.set(e.data.table, e.data)
       }
     }
-
+    ports.forEach(p => p.postMessage({data: e.data, et: entityTables, u: user, online: isOnline, ready: readyToRun()}))
     clearInterval(interval)
 
     if(readyToRun()){
@@ -49,7 +50,7 @@ global.onconnect = (event) => {
           db.open()
           entityTables.forEach((value, key, map) => {
             db[key].where('status').equals('PENDING_IDLE').each(entity => {
-              updateEntity(value, entity, ports, db)
+              updateEntity(value, entity, db)
             })
           })
         }
@@ -59,13 +60,12 @@ global.onconnect = (event) => {
       }, config.entityUpdateInterval)
     }
   }
-  port.start()
 }
 
 const readyToRun = () =>
   user !== undefined && user.token !== undefined && isOnline && entityTables.size > 0
 
-const updateEntity = (entityTable, entity, ports, db) => {
+const updateEntity = (entityTable, entity, db) => {
   let {path, action, table} = entityTable
   let _entityTemp = Object.assign({}, entity)
   delete _entityTemp.status
@@ -73,7 +73,8 @@ const updateEntity = (entityTable, entity, ports, db) => {
 
   ports.forEach(p => p.postMessage({action: action, entity: _entity, status: PENDING_ACTIVE}))
 
-  const current = db[table], orig = db[table + 'Orig']
+  const current = db[table]
+  const orig    = db[table + 'Orig']
 
   current.get(_entity.id).then(o => {
     if(o.status === undefined)
