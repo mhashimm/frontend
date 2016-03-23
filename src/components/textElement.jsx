@@ -11,7 +11,7 @@ export default class TextElement extends Component {
     help: PropTypes.string,
     rows: PropTypes.number,
     placeholder: PropTypes.string
-  }
+  };
 
   render(){
     const {label, field, rows, help, placeholder } = this.props

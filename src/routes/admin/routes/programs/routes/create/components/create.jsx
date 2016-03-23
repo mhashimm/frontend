@@ -1,7 +1,7 @@
 import React, { PropTypes, Component } from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { pushPath } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 
 import { createProgram } from '../../../store/actions'
 import { createValidator, validateId } from '~/utils/validate'
@@ -27,7 +27,7 @@ class Create extends Component {
   handleSubmit(program) {
     const {dispatch} = this.props;
     dispatch(createProgram(program));
-    dispatch(pushPath('/admin/programs'));
+    dispatch(routeActions.push('/admin/programs'));
   }
 }
 
@@ -38,7 +38,7 @@ class CreateProgramForm extends Component {
     resetForm: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     faculties: PropTypes.array.isRequired
-  }
+  };
 
   render(){
     const {

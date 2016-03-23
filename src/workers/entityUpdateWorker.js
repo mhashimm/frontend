@@ -4,7 +4,7 @@ import createDb from '~/actions/createDb'
 import { SUCCESS, FAILURE, PENDING_IDLE, PENDING_ACTIVE } from '~/stores/status'
 
 var entityTables = new Map()
-var user = {username: undefined, token: undefined}
+var user = undefined
 var isOnline = false
 var ports = new Array()
 var interval
@@ -15,7 +15,7 @@ global.onconnect = (event) => {
   port.onmessage = (e) => {
     if(e.data instanceof Object){
       if(e.data.hasOwnProperty('username')){
-        user = Object.assign({}, user, e.data)
+        user = Object.assign({}, user, ...[e.data])
       }
       else if(e.data.hasOwnProperty('token')){
         user = Object.assign({}, user, e.data)
@@ -27,10 +27,10 @@ global.onconnect = (event) => {
       }
       else if(e.data.hasOwnProperty('entity') && e.data.hasOwnProperty('table') &&
               e.data.hasOwnProperty('path') && e.data.hasOwnProperty('action')){
-        if(user.username !== undefined){
-          let db = createDb(config.db.version, user.username)
+        if(user !== undefined){
+          let db = createDb(user)
           db.open()
-          updateEntity({...e.data}, e.data.entity, ports, db)
+          updateEntity({...e.data}, e.data.entity, db)
         }
       }
       else if(e.data.hasOwnProperty('table') &&
@@ -45,11 +45,11 @@ global.onconnect = (event) => {
     if(readyToRun()){
       interval = setInterval(() => {
         if(readyToRun()){
-          let db = createDb(config.db.version, user.username)
+          let db = createDb(user)
           db.open()
           entityTables.forEach((value, key, map) => {
             db[key].where('status').equals('PENDING_IDLE').each(entity => {
-              updateEntity(value, entity, ports, db)
+              updateEntity(value, entity, db)
             })
           })
         }
@@ -59,13 +59,12 @@ global.onconnect = (event) => {
       }, config.entityUpdateInterval)
     }
   }
-  port.start()
 }
 
 const readyToRun = () =>
-  user.username != undefined && user.token != undefined && isOnline && entityTables.size > 0
+  user !== undefined && user.token !== undefined && isOnline && entityTables.size > 0
 
-const updateEntity = (entityTable, entity, ports, db) => {console.log(entity);
+const updateEntity = (entityTable, entity, db) => {
   let {path, action, table} = entityTable
   let _entityTemp = Object.assign({}, entity)
   delete _entityTemp.status
@@ -73,7 +72,8 @@ const updateEntity = (entityTable, entity, ports, db) => {console.log(entity);
 
   ports.forEach(p => p.postMessage({action: action, entity: _entity, status: PENDING_ACTIVE}))
 
-  const current = db[table], orig = db[table + 'Orig']
+  const current = db[table]
+  const orig    = db[table + 'Orig']
 
   current.get(_entity.id).then(o => {
     if(o.status === undefined)
@@ -106,8 +106,9 @@ const updateEntity = (entityTable, entity, ports, db) => {console.log(entity);
           }, 5000)
       }
       else {
-         ports.forEach(p => p.postMessage({action: action, entity: _entity, status: FAILURE}))
-         current.put(Object.assign({}, _entity, {status: FAILURE, error: response.statusText}))
+        let _local = Object.assign({}, _entity, {status: FAILURE, error: response.statusText})
+        ports.forEach(p => p.postMessage({action: action, entity: _local, status: FAILURE}))
+        current.put(_local)
       }
     }
     ).catch(error => {

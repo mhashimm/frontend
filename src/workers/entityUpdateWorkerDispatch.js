@@ -1,7 +1,5 @@
 import config from 'config'
 
-let actionMap = new Map()
-
 export default function entityUpdateWorkerDispatch(store){
   var entityUpdateWorker = require('shared-worker!./entityUpdateWorker')
   var entityWorker = new entityUpdateWorker()
@@ -13,10 +11,6 @@ export default function entityUpdateWorkerDispatch(store){
       const {entity, action, status} = message.data
       store.dispatch({type: action, entity: Object.assign({}, entity, {status: status})})
     }
-  }
-
-  entityWorker.port.onerror = function(error){
-    console.log(error);
   }
 
   entityWorker.port.postMessage({
@@ -36,22 +30,22 @@ const userScope = (store, entityWorker) => {
           case 'admin':
             entityWorker.port.postMessage({
               table: 'faculties',
-              path: config.faculties.path,
+              path: config.admin.faculties.path,
               action: 'FACULTY_UPDATED'
             })
             entityWorker.port.postMessage({
               table: 'departments',
-              path: config.departments.path,
+              path: config.admin.departments.path,
               action: 'DEPARTMENT_UPDATED'
             })
             entityWorker.port.postMessage({
               table: 'courses',
-              path: config.courses.path,
+              path: config.admin.courses.path,
               action: 'COURSE_UPDATED'
             })
             entityWorker.port.postMessage({
               table: 'programs',
-              path: config.programs.path,
+              path: config.admin.programs.path,
               action: 'PROGRAM_UPDATED'
             })
             break;

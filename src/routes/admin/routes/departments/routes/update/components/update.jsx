@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { pushPath } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css')
@@ -20,8 +20,7 @@ class Update extends Component {
       <div>
         <h3>تعديل القسم</h3>
         <ReduxForm onSubmit={(e) => this.handleSubmit(e)}
-          faculties={this.props.faculties}
-          switchValue={department.isActive} initialValues={{...department}}/>
+          faculties={this.props.faculties} initialValues={{...department}}/>
       </div>
     )
   }
@@ -29,7 +28,7 @@ class Update extends Component {
   handleSubmit(department){
     const {dispatch} = this.props
     dispatch(updateDepartment(department))
-    dispatch(pushPath('/admin/departments'))
+    dispatch(routeActions.push('/admin/departments'))
   }
 }
 
@@ -41,7 +40,7 @@ class UpdateDepartmentForm extends Component {
     resetForm: PropTypes.func.isRequired,
     submitting: PropTypes.bool.isRequired,
     faculties: PropTypes.array.isRequired
-  }
+  };
 
   render(){
     const {
@@ -63,7 +62,7 @@ class UpdateDepartmentForm extends Component {
             options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}) ) } />
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
-              <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشط" />
+              <Switch className="" offText="لا" {...isActive} state={isActive.value} onText="نعم" labelText="نشط" />
             </div>
         </div>
         <br/>

@@ -1,7 +1,5 @@
 
 import config from 'config'
-import createEntity from '~/actions/createEntity'
-import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import {loadFaculties} from '../../faculties/store/actions'
 import createDb from '~/actions/createDb'
@@ -23,7 +21,7 @@ export function createDepartment(department){
     dispatch(departmentAdded(entity))
 
     entityWorker.port.postMessage({
-      path: config.departments.path,
+      path: config.admin.departments.path,
       entity: entity,
       table: 'departments',
       action: DEPARTMENT_UPDATED
@@ -34,7 +32,7 @@ export function createDepartment(department){
 export function updateDepartment(department){
   return function(){
     entityWorker.port.postMessage({
-      path: config.departments.path,
+      path: config.admin.departments.path,
       entity: department,
       table: 'departments',
       action: DEPARTMENT_UPDATED
@@ -45,25 +43,23 @@ export function updateDepartment(department){
 export function cancelDepartment(id){
   return function(dispatch, getState){
     cancelEntity({
-      version: 1,
       entity: getState().departments.find(d => d.id === id),
-      username: getState().user.username,
+      user: getState().user,
       table: 'departments',
-      origTable: 'departmentsOrig',
-      updateAction: (id, department) => (dispatch) => dispatch(departmentCanceled(id, department))})
+      updateAction: (id, department) => (dispatch) => dispatch(departmentCanceled(id, department)),
+      dispatch: dispatch
+    })
   }
 }
 
 export function loadDepartments(){
   return function(dispatch, getState){
     dispatch(loadFaculties())
-    let db = createDb(undefined, getState().user.username)
+    let db = createDb(getState().user)
     db.open()
     db.departments.toArray(function(_departments) {
        dispatch(departmentsLoaded(_departments))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 

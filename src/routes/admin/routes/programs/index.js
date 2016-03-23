@@ -1,5 +1,6 @@
 module.exports = {
   path: 'programs',
+  name: 'البرامج',
 
   getChildRoutes(location, cb) {
     require.ensure([], (require) => {

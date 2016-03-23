@@ -12,49 +12,45 @@ export default {
   cors: 'cors',
   db: {
     name: 'sisdndb',
-    version: '1',
-    version_1: [
-      facultySchema,
-      Object.assign({}, facultySchema, {name: 'facultiesOrig'}),
-      departmentSchema,
-      Object.assign({}, departmentSchema, {name: 'departmentsOrig'}),
-      courseSchema,
-      Object.assign({}, courseSchema, {name: 'coursesOrig'}),
-      programsSchema,
-      Object.assign({}, programsSchema, {name: 'programsOrig'})
-    ]
+    version: '1'
   },
-  org: {
+  admin: {
+    db: [
+      facultySchema,
+      departmentSchema,
+      courseSchema,
+      programsSchema
+    ],
     path: {
       get: '/admin'
-    }
-  },
-  faculties: {
-    path: {
-      post: '/admin/faculties',
-      put: '/admin/faculties',
-      get: '/admin/faculties'
-    }
-  },
-  departments: {
-    path: {
-      post: '/admin/departments',
-      put: '/admin/departments',
-      get: '/admin/departments'
-    }
-  },
-  courses: {
-    path: {
-      post: '/admin/courses',
-      put: '/admin/courses',
-      get: '/admin/courses'
-    }
-  },
-  programs: {
-    path: {
-      post: '/admin/programs',
-      put: '/admin/programs',
-      get: '/admin/programs'
+    },
+    faculties: {
+      path: {
+        post: '/admin/faculties',
+        put: '/admin/faculties',
+        get: '/admin/faculties'
+      }
+    },
+    departments: {
+      path: {
+        post: '/admin/departments',
+        put: '/admin/departments',
+        get: '/admin/departments'
+      }
+    },
+    courses: {
+      path: {
+        post: '/admin/courses',
+        put: '/admin/courses',
+        get: '/admin/courses'
+      }
+    },
+    programs: {
+      path: {
+        post: '/admin/programs',
+        put: '/admin/programs',
+        get: '/admin/programs'
+      }
     }
   }
 }

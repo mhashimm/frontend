@@ -1,7 +1,5 @@
 
 import config from 'config'
-import createEntity from '~/actions/createEntity'
-import updateEntity from '~/actions/updateEntity'
 import cancelEntity from '~/actions/cancelEntity'
 import createDb from '~/actions/createDb'
 import { PENDING_IDLE } from '~/stores/status'
@@ -22,7 +20,7 @@ export function createFaculty(faculty){
     dispatch(facultyAdded(entity))
 
     entityWorker.port.postMessage({
-      path: config.faculties.path,
+      path: config.admin.faculties.path,
       entity: entity,
       table: 'faculties',
       action: FACULTY_UPDATED
@@ -33,7 +31,7 @@ export function createFaculty(faculty){
 export function updateFaculty(faculty){
   return function(){
     entityWorker.port.postMessage({
-      path: config.faculties.path,
+      path: config.admin.faculties.path,
       entity: faculty,
       table: 'faculties',
       action: FACULTY_UPDATED
@@ -44,24 +42,22 @@ export function updateFaculty(faculty){
 export function cancelFaculty(id){
   return function(dispatch, getState){
     cancelEntity({
-      version: 1,
       entity: getState().faculties.find(f => f.id === id),
-      username: getState().user.username,
+      user: getState().user,
       table: 'faculties',
-      origTable: 'facultiesOrig',
-      updateAction: (id, faculty) => (dispatch) => dispatch(facultyCanceled(id, faculty))})
+      updateAction: (id, faculty) => (dispatch) => dispatch(facultyCanceled(id, faculty)),
+      dispatch: dispatch
+    })
   }
 }
 
 export function loadFaculties(){
   return function(dispatch, getState){
-    let db = createDb(undefined, getState().user.username)
+    let db = createDb(getState().user)
     db.open()
     db.faculties.toArray(function(_faculties) {
        dispatch(facultiesLoaded(_faculties))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 

@@ -1,5 +1,6 @@
 module.exports = {
   path: 'create',
+  name: 'إضافة برنامج',
 
   getComponent(location, cb) {
     require.ensure([], (require) => {

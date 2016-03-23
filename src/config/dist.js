@@ -10,7 +10,7 @@ let config = {
     url: 'http://localhost:8080/auth',
     realm: 'sisdn-realm',
     clientId: 'sisdn',
-    redirect_uri: 'http://localhost:9000',
+    redirect_uri: 'http://localhost:8000/login',
     flow: 'standard'
   }
 };

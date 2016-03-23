@@ -1,20 +1,20 @@
 import createDb from '~/actions/createDb'
 
-export function cancelEntity({version, entity, username, table, origTable, updateAction}){
-  const db = createDb(version, username)
+export function cancelEntity({entity, user, table, updateAction, dispatch}){
+  const db = createDb(user)
   db.open()
-  const current = db[table], orig = db[origTable]
+  const current = db[table], orig = db[table + 'Orig']
 
   orig.get(entity.id).
     then(_entity => {
       if(_entity !== undefined){
         orig.delete(_entity.id)
         current.put(_entity)
-        global.store.dispatch(updateAction(_entity.id, _entity))
+        dispatch(updateAction(_entity.id, _entity))
       }
       else {
         current.delete(entity.id)
-        global.store.dispatch(updateAction(entity.id))
+        dispatch(updateAction(entity.id))
       }
     })
     db.close()

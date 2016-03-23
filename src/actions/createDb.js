@@ -1,14 +1,15 @@
 import Dexie from 'dexie'
 import config from 'config'
 
-export default function createDb(version, username){
-  const _version = version === undefined || version === null ? 1 : version
-  var db = new Dexie(username + '@sisdn-' + _version)
+export default function createDb(user){
+  const version = config.db.version
+  var db = new Dexie(user.username + '@sisdn-' + version)
   let stores = {}
-  for(let tbl of config.db['version_' + _version]){
-    Object.assign(stores, {[tbl.name]: tbl.schema})
-  }
-  db.version(_version).stores(stores)
 
+  for(let tbl of config.admin.db){
+    Object.assign(stores, {[tbl.name]: tbl.schema}, {[tbl.name + 'Orig']: tbl.schema})
+  }
+
+  db.version(version).stores(stores)
   return db
 }

@@ -1,7 +1,7 @@
 import React, {PropTypes, Component} from 'react'
 import { connect } from 'react-redux'
 import {reduxForm} from 'redux-form'
-import { pushPath } from 'redux-simple-router'
+import { routeActions } from 'react-router-redux'
 import * as elements from '~/components/elements'
 
 require('../../../../../../../styles/react-bootstrap-switch.css')
@@ -15,13 +15,18 @@ import SelectElement from '~/components/selectElement'
 import TextElement from '~/components/textElement'
 
 class Update extends Component {
+  constructor(props){
+    super(props)
+    //props.facultyId = props.faculties.find(f => f.id === props.params.id).id
+  }
+
   render(){
     const course = this.props.courses.find(c => c.id === this.props.params.id)
     return (
       <div>
         <h3>تعديل المقرر</h3>
         <ReduxForm onSubmit={(e) => this.handleSubmit(e)} faculties={this.props.faculties}
-          departments={this.props.departments} switchValue={course.isActive} initialValues={{...course}}/>
+          departments={this.props.departments} initialValues={{...course}}/>
       </div>
     )
   }
@@ -29,7 +34,7 @@ class Update extends Component {
   handleSubmit(course){
     const {dispatch} = this.props
     dispatch(updateCourse(course))
-    dispatch(pushPath('/admin/courses'))
+    dispatch(routeActions.push('/admin/courses'))
   }
 }
 
@@ -42,7 +47,7 @@ class UpdateCourseForm extends Component {
     submitting: PropTypes.bool.isRequired,
     faculties: PropTypes.array.isRequired,
     departments: PropTypes.array.isRequired
-  }
+  };
 
   render(){
     const {
@@ -62,12 +67,13 @@ class UpdateCourseForm extends Component {
           <InputElement field={title} placeholder="أدخل إسم المقرر" label="إسم المقرر"/>
           <InputElement field={titleTr} placeholder="أدخل الإسم بالإنجليزية" label="الإسم بالإنجليزية"/>
           <SelectElement field={facultyId} placeholder="إختر الكلية" label="الكلية"
-            options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}) ) } />
+            options={faculties.map(f => Object.create({id: f.id, text: f.title, isActive: f.isActive}))} />
           <SelectElement field={departmentId} placeholder="إختر القسم" label="القسم"
-            options={departments.map(d => Object.create({id: d.id, text: d.title, isActive: d.isActive}) ) } />
+            options={departments.filter(d => d.facultyId === this.props.values.facultyId)
+              .map(d => Object.create({id: d.id, text: d.title, isActive: d.isActive}))} />
           <div className="form-group ">
             <div className="col-md-12 col-md-offset-2">
-              <Switch className="" offText="لا" {...isActive} state={this.props.switchValue} onText="نعم" labelText="نشط" />
+              <Switch className="" offText="لا" {...isActive} state={isActive.value} onText="نعم" labelText="نشط" />
             </div>
           </div>
           <TextElement field={remarks} label='ملحوظات'/>
