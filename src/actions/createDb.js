@@ -6,11 +6,9 @@ export default function createDb(user){
   var db = new Dexie(user.username + '@sisdn-' + version)
   let stores = {}
 
-
   for(let tbl of config.admin.db){
     Object.assign(stores, {[tbl.name]: tbl.schema}, {[tbl.name + 'Orig']: tbl.schema})
   }
-
 
   db.version(version).stores(stores)
   return db

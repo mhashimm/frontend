@@ -1,5 +1,5 @@
 import config from 'config'
-var counter = 0
+
 export default function entityUpdateWorkerDispatch(store){
   var entityUpdateWorker = require('shared-worker!./entityUpdateWorker')
   var entityWorker = new entityUpdateWorker()
@@ -7,8 +7,6 @@ export default function entityUpdateWorkerDispatch(store){
   userScope(store, entityWorker)
 
   entityWorker.port.onmessage = function(message){
-    console.log(`${counter++} >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>`);
-    console.log(message);
     if(message.data.hasOwnProperty('action') && message.data.hasOwnProperty('entity')){
       const {entity, action, status} = message.data
       store.dispatch({type: action, entity: Object.assign({}, entity, {status: status})})

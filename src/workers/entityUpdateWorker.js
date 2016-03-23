@@ -13,7 +13,6 @@ global.onconnect = (event) => {
   var port = event.ports[0]
 
   port.onmessage = (e) => {
-
     if(e.data instanceof Object){
       if(e.data.hasOwnProperty('username')){
         user = Object.assign({}, user, ...[e.data])
@@ -40,7 +39,7 @@ global.onconnect = (event) => {
         entityTables.set(e.data.table, e.data)
       }
     }
-    ports.forEach(p => p.postMessage({data: e.data, et: entityTables, u: user, online: isOnline, ready: readyToRun()}))
+
     clearInterval(interval)
 
     if(readyToRun()){

@@ -64,7 +64,7 @@ export function login(user){
     db.open()
 
     db.users.get(user.username).then(u => {
-      if(!!u && u.password === user.password && !!u.refreshToken){console.log('|||||||||||||||||||||||||||||||||||||||||||');
+      if(!!u && u.password === user.password && !!u.refreshToken){
         if(getState().isOnline)
           getAccessToken(u.refreshToken).then(response => keycloakInit(response))
         else { //login locally
@@ -84,7 +84,7 @@ export function login(user){
       }
     })
 
-    function keycloakInit(response){console.log('::::::::::::::::::::::::::::::::::::::::::::::');
+    function keycloakInit(response){
       keycloak.init({
         token: response.access_token,
         idToken: response.id_token,
@@ -123,7 +123,7 @@ export function login(user){
   }
 }
 
-export function getAccessToken(token){console.log('[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]]]]');
+export function getAccessToken(token){
   const k_url = config.keycloak.url + '/realms/sisdn-realm/protocol/openid-connect/token'
 
   return fetch(k_url, {
@@ -142,7 +142,7 @@ export function getAccessToken(token){console.log('[[[[[[[[[[[[[[[[[[[[[]]]]]]]]
   })
 }
 
-function getOfflineToken(user){console.log('++++++++++++++++++++++++++++++++++++++++++++');
+function getOfflineToken(user){
     const k_url = config.keycloak.url + '/realms/sisdn-realm/protocol/openid-connect/token'
 
     return fetch(k_url, {
