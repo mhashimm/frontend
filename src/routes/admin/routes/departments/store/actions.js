@@ -59,9 +59,7 @@ export function loadDepartments(){
     db.open()
     db.departments.toArray(function(_departments) {
        dispatch(departmentsLoaded(_departments))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 

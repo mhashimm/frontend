@@ -61,9 +61,7 @@ export function loadCourses(){
     db.open()
     db.courses.toArray(function(_courses) {
        dispatch(coursesLoaded(_courses))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 

@@ -69,9 +69,7 @@ export function loadPrograms(){
     db.open()
     db.programs.toArray(function(_programs) {
        dispatch(programsLoaded(_programs))
-     })
-
-    db.close()
+     }).then(() => db.close())
   }
 }
 
