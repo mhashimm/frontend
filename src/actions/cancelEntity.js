@@ -16,8 +16,7 @@ export function cancelEntity({entity, user, table, updateAction, dispatch}){
         current.delete(entity.id)
         dispatch(updateAction(entity.id))
       }
-    })
-    db.close()
+    }).then(() => db.close())
 }
 
 module.exports = cancelEntity
