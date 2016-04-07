@@ -8,7 +8,6 @@ const programsSchema = {name: 'programs', schema: 'id, title, titleTr, facultyId
 export default {
   onlineCheckInterval: 10000,
   entityUpdateInterval: 10000,
-  url: 'http://localhost:8888',
   cors: 'cors',
   db: {
     name: 'sisdndb',

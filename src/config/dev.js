@@ -4,6 +4,7 @@ import baseConfig from './base';
 
 
 let config = {
+  url: 'http://localhost:8888',
   appEnv: 'dev',
   apiUrl: 'http://localhost:8888/api',
   keycloak: {

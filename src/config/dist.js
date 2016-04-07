@@ -4,13 +4,14 @@ import baseConfig from './base';
 
 
 let config = {
+  url: 'http://sisdn.herokuapp.com',
   appEnv: 'dist',
-  apiUrl: 'http://localhost:8888/api',
+  apiUrl: 'http://sisdn.herokuapp.com/api',
   keycloak: {
-    url: 'http://localhost:8080/auth',
+    url: 'https://keycloak-sisdn.rhcloud.com/auth',
     realm: 'sisdn-realm',
     clientId: 'sisdn',
-    redirect_uri: 'http://localhost:8000/login',
+    redirect_uri: 'http://sisdn.herokuapp.com/login',
     flow: 'standard'
   }
 };
