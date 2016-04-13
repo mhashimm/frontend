@@ -67,7 +67,7 @@ export function login(user){
       if(!!u && u.password === user.password && !!u.refreshToken){
         if(getState().isOnline)
           getAccessToken(u.refreshToken).then(response => keycloakInit(response))
-        else { //login locally
+        else { //login locally but watch for change in online state
           dispatch(loginSuccess({
             groups: u.groups.slice(),
             username: u.username,
@@ -75,6 +75,13 @@ export function login(user){
             //faculties: u.faculties.slice(),
             token: undefined
           }))
+
+          let interval = setInterval(() => {
+            if(getState().isOnline){
+              clearInterval(interval)
+              getAccessToken(u.refreshToken).then(response => keycloakInit(response))
+            }
+          }, config.onlineCheckInterval)
         }
       }
       else { //login remotely
