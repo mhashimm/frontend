@@ -51,14 +51,18 @@ export function tokenFailed(error){
 
 export function login(user){
   return function(dispatch, getState){
+    
     dispatch(beginLogin())
 
     var keycloak = new  keycloakConf(config.keycloak)
-    keycloak.onTokenExpired = () => keycloak.updateToken()
-      .success(refreshed => refreshed
-        ? dispatch(tokenRefreshed(keycloak.token))
-        : dispatch(tokenFailed()))
-      .error(error => dispatch(tokenFailed()))
+    keycloak.onTokenExpired = () => {
+      if(getState().user.authenticated)
+        keycloak.updateToken()
+        .success(refreshed => refreshed
+          ? dispatch(tokenRefreshed(keycloak.token))
+          : dispatch(tokenFailed()))
+        .error(error => dispatch(tokenFailed()))
+      }
 
     var db = new Dexie('usersdb')
     db.version(config.db.version).stores({users: 'username, password, name, orgId, orgName, groups, refreshToken, departments, faculties'})
@@ -80,7 +84,7 @@ export function login(user){
 
         getAccessToken(refreshToken).then(response => keycloakInit(response))
         let interval = setInterval(() => {
-          if(getState().user.token === undefined && getState().user.authenticated)
+          if(!getState().user.token && getState().user.authenticated && getState().isOnline)
             getAccessToken(refreshToken).then(response => keycloakInit(response))
           else if(!getState().user.authenticated)
             clearInterval(interval)
