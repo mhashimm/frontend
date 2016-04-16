@@ -1,5 +1,6 @@
 import config from 'config'
 import Dexie from 'dexie'
+import CryptoJS from 'crypto-js'
 const keycloakConf = require('keycloak')
 
 export const BEGIN_LOGIN = 'BEGIN_LOGIN'
@@ -64,25 +65,27 @@ export function login(user){
     db.open()
 
     db.users.get(user.username).then(u => {
-      if(!!u && u.password === user.password && !!u.refreshToken){
-        if(getState().isOnline)
-          getAccessToken(u.refreshToken).then(response => keycloakInit(response))
-        else { //login locally but watch for change in online state
-          dispatch(loginSuccess({
-            groups: u.groups.slice(),
-            username: u.username,
-            departments: u.departments.slice(),
-            //faculties: u.faculties.slice(),
-            token: undefined
-          }))
+      if(!!u && !!u.password && !!u.refreshToken &&
+        u.password === CryptoJS.MD5(user.password).toString(CryptoJS.enc.Hex)){
+        let refreshToken = CryptoJS.AES.decrypt(u.refreshToken, user.password).toString(CryptoJS.enc.Utf8)
 
-          let interval = setInterval(() => {
-            if(getState().isOnline){
-              clearInterval(interval)
-              getAccessToken(u.refreshToken).then(response => keycloakInit(response))
-            }
-          }, config.onlineCheckInterval)
-        }
+        //login locally but watch for change in online state
+        dispatch(loginSuccess({
+          groups: u.groups.slice(),
+          username: u.username,
+          departments: u.departments.slice(),
+          //faculties: u.faculties.slice(),
+          token: undefined
+        }))
+
+        getAccessToken(refreshToken).then(response => keycloakInit(response))
+        let interval = setInterval(() => {
+          if(getState().user.token === undefined && getState().user.authenticated)
+            getAccessToken(refreshToken).then(response => keycloakInit(response))
+          else if(!getState().user.authenticated)
+            clearInterval(interval)
+        }, config.onlineCheckInterval)
+
       }
       else { //login remotely
         getOfflineToken(user).then(response => {
@@ -115,14 +118,14 @@ export function login(user){
 
           db.users.put({
             username: remoteUser.username,
-            password: user.password, //TODO hash password before storing it
+            password: CryptoJS.MD5(user.password).toString(CryptoJS.enc.Hex),
             name: remoteUser.name,
             orgId: remoteUser.orgId,
             orgName: remoteUser.orgName,
             departments: remoteUser.departments,
             //faculties: remoteUser.faculties,
             groups: remoteUser.groups.slice(),
-            refreshToken: keycloak.refreshToken //TODO hash token before storing it
+            refreshToken: CryptoJS.AES.encrypt(keycloak.refreshToken, user.password).toString()
           })
         }
       }).error(error => dispatch(loginFailure(error)))
