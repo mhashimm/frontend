@@ -10,20 +10,15 @@ import InputElement from '~/components/inputElement'
 import * as elements from '~/components/elements'
 
 require('../../../styles/react-bootstrap-switch.css')
-var Switch = require('react-bootstrap-switch')
 
 class Login extends Component {
-  componentDidMount(){
-    //this.props.actions.login()
-  }
-
   render(){
     return(
       <div>
         <h3>تسجيل الدخول</h3>
         <br/>
         <ReduxForm onSubmit={(e) => this.handleSubmit(e)}
-          initialValues={{username: '', password: '', passwordConfirm: '', isNew: false}}/>
+          initialValues={{username: '', password: '', isNew: false}}/>
       </div>
     )
   }
@@ -43,7 +38,7 @@ class LoginForm extends Component {
 
   render(){
     const {
-      fields: {username, password, passwordConfirm, isNew},
+      fields: {username, password, isNew},
       handleSubmit,
       resetForm,
       submitting
@@ -67,9 +62,9 @@ class LoginForm extends Component {
 
 let ReduxForm = reduxForm({
   form: 'LoginForm',
-  fields: ['username', 'password', 'passwordConfirm', 'isNew'],
+  fields: ['username', 'password', 'isNew'],
   asyncValidate: validatePassword,
-  asyncBlurFields: ['username', 'passwordConfirm'],
+  asyncBlurFields: ['username'],
   validate: createValidator(loginValidator)
   }
 )(LoginForm);
