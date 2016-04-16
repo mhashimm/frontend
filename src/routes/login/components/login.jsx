@@ -53,15 +53,6 @@ class LoginForm extends Component {
       <form onSubmit={handleSubmit} className="form-horizontal">
         <InputElement field={username} placeholder="أدخل إسم المستخدم" label="الإسم"/>
         <InputElement field={password} type='password' placeholder="أدخل كلمة المرور" label="كلمة المرور"/>
-        { isNew.value ?
-          <InputElement field={passwordConfirm} type='password' placeholder="أدخل كلمةالمرور مرة إخرى" label="تأكيد كلمة المرور"/>
-          : null
-        }
-        <div className="form-group">
-          <div className="col-md-12 col-md-offset-2">
-            <Switch className="" offText="دخول" {...isNew} state={isNew.value} onText="تسجيل" />
-          </div>
-        </div>
         <div className="form-group">
           <div className="col-md-12 col-md-offset-2">
             <elements.ResetButton disabled={submitting} onClick={resetForm} text="إسترجاع"/>
