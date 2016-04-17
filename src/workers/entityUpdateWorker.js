@@ -109,7 +109,7 @@ const updateEntity = (entityTable, entity, user) => {
         current.put(_local)
       }
     }
-    ).catch(error => {
+    ).catch(() => {
       ports.forEach(p => p.postMessage({action: action, entity: _entity, status: PENDING_IDLE}))
       db.transaction('rw', current, orig, function() {
         current.delete(_entity.id).then(() =>

@@ -51,7 +51,7 @@ export function tokenFailed(error){
 
 export function login(user){
   return function(dispatch, getState){
-    
+
     dispatch(beginLogin())
 
     var keycloak = new  keycloakConf(config.keycloak)
@@ -61,7 +61,7 @@ export function login(user){
         .success(refreshed => refreshed
           ? dispatch(tokenRefreshed(keycloak.token))
           : dispatch(tokenFailed()))
-        .error(error => dispatch(tokenFailed()))
+        .error(() => dispatch(tokenFailed()))
       }
 
     var db = new Dexie('usersdb')
@@ -150,9 +150,6 @@ export function getAccessToken(token){
     if(response.status == 200){
       return response.json()
     }
-    else {
-      console.error(response.statusText);
-    }
   })
 }
 
@@ -169,9 +166,6 @@ function getOfflineToken(user){
     }).then(response => {
       if(response.status == 200){
         return response.json()
-      }
-      else {
-        console.error(response.statusText);
       }
     })
 }
