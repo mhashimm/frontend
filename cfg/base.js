@@ -3,6 +3,7 @@ var port = 8000;
 var srcPath = path.join(__dirname, '/../src');
 var publicPath = '/assets/';
 var ExtractTextPlugin = require("extract-text-webpack-plugin");
+require('es6-promise').polyfill();
 
 module.exports = {
   port: port,
